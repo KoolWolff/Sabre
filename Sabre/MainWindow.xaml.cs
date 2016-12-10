@@ -29,14 +29,7 @@ namespace Sabre
             log.Write("LOGGER INITIALIZED", Logger.WriterType.WriteMessage);
             InitializeComponent();
             log.Write("SABRE INITIALIZED", Logger.WriterType.WriteMessage);
-        }
-
-        private void themeChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Tuple<AppTheme, Accent> appStyle = ThemeManager.DetectAppStyle(Application.Current);
-            ThemeManager.ChangeAppStyle(Application.Current,
-                                        ThemeManager.GetAccent("Cyan"),
-                                        ThemeManager.GetAppTheme("BaseDark"));
+            Functions.LoadSettings(this);
         }
 
         private void buttonGit(object sender, RoutedEventArgs e)
@@ -76,6 +69,19 @@ namespace Sabre
                 g.Visibility = Visibility.Hidden;
             }
             main.Visibility = Visibility.Visible;
+        }
+
+        private void changeAppearance(object sender, SelectionChangedEventArgs e)
+        {
+            if(comboAccents.SelectedItem != null && comboThemes.SelectedItem != null)
+            {
+                try
+                {
+                    Functions.ChangeAppearance(comboAccents.SelectedItem.ToString(), comboThemes.SelectedItem.ToString());
+                    log.Write("APPEARANCE CHANGED TO " + comboAccents.SelectedItem.ToString() + " " + comboThemes.SelectedItem.ToString(), Logger.WriterType.WriteMessage);
+                }
+                catch (Exception) { log.Write("ERROR APPEARANCE TO " + comboAccents.SelectedItem.ToString() + " " + comboThemes.SelectedItem.ToString(), Logger.WriterType.WriteError); }
+            }
         }
     }
 }

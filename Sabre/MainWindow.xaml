@@ -25,7 +25,7 @@
         </Controls:WindowCommands>
     </Controls:MetroWindow.LeftWindowCommands>
     <Grid x:Name="sabre">
-        <Grid x:Name="main">
+        <Grid x:Name="main" Visibility="Hidden">
             <Controls:Tile x:Name="tileSkinCollection" Title="Skin Collection" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Click="openSkinCollection">
                 <Rectangle Width="280" Height="109" Margin="0,-30,0,0">
                     <Rectangle.Fill>
@@ -48,8 +48,17 @@
                 </Rectangle>
             </Controls:Tile>
         </Grid>
-        <Grid x:Name="gridSettings" Visibility="Hidden">
-            
+        <Grid x:Name="gridSettings">
+            <GroupBox x:Name="groupAppearance" Header="Appearance" HorizontalAlignment="Left" Height="121" Margin="10,10,0,0" VerticalAlignment="Top" Width="268">
+                <Grid>
+                    <Label x:Name="labelTheme" Content="Theme" HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" VerticalAlignment="Top" Width="47" Background="{x:Null}"/>
+                    <ComboBox x:Name="comboThemes" HorizontalAlignment="Left" Height="13" Margin="57,10,0,0" VerticalAlignment="Top" Width="142" SelectionChanged="changeAppearance"/>
+                    <Label x:Name="labelAccent" Content="Accent" HorizontalAlignment="Left" Height="24" Margin="10,48,0,0" VerticalAlignment="Top" Width="47" Background="{x:Null}"/>
+                    <ComboBox x:Name="comboAccents" HorizontalAlignment="Left" Height="13" Margin="57,46,0,0" VerticalAlignment="Top" Width="142" SelectionChanged="changeAppearance"/>
+
+                </Grid>
+            </GroupBox>
+
         </Grid>
         <Grid x:Name="gridSkinCollection" Visibility="Hidden">
 

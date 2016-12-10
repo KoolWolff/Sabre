@@ -1,7 +1,10 @@
-﻿using System;
+﻿using MahApps.Metro;
+using System;
+using System.Windows;
 using System.IO;
 using System.Windows.Controls;
 using zlib;
+using System.Collections.Generic;
 
 namespace Sabre
 {
@@ -45,6 +48,37 @@ namespace Sabre
         {
             hider.Visibility = System.Windows.Visibility.Hidden;
             shower.Visibility = System.Windows.Visibility.Visible;
+        }
+        public static string GetTheme()
+        {
+            Tuple<AppTheme, Accent> appStyle = ThemeManager.DetectAppStyle(Application.Current);
+            return appStyle.Item1.Name;
+        }
+        public static string GetAccent()
+        {
+            Tuple<AppTheme, Accent> appStyle = ThemeManager.DetectAppStyle(Application.Current);
+            return appStyle.Item2.Name;
+        }
+        public static void ChangeAppearance(string accent, string theme)
+        {
+            ThemeManager.ChangeAppStyle(Application.Current,
+                                        ThemeManager.GetAccent(accent),
+                                        ThemeManager.GetAppTheme(theme));
+        }
+        public static void LoadSettings(MainWindow mw)
+        {
+            IEnumerable<Accent> accents = ThemeManager.Accents;
+            foreach (Accent a in accents)
+            {
+                mw.comboAccents.Items.Add(a.Name);
+            }
+            IEnumerable<AppTheme> themes = ThemeManager.AppThemes;
+            foreach (AppTheme t in themes)
+            {
+                mw.comboThemes.Items.Add(t.Name);
+            }
+            mw.comboAccents.SelectedItem = Functions.GetAccent();
+            mw.comboThemes.SelectedItem = Functions.GetTheme();
         }
     }
 }
