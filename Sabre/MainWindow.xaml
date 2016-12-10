@@ -2,38 +2,60 @@
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                       Title="Sabre"
                       Height="720"
                       Width="1280" ResizeMode="NoResize"
                       GlowBrush="{DynamicResource AccentColorBrush}">
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <Button Content="{iconPacks:PackIconOcticons MarkGithub, Width=20, Height=20}"
+                    Click="buttonGit"
+                    ToolTip="Sabre GitHub repository"/>
+            <Button Content="{iconPacks:PackIconOcticons FileCode, Width=20, Height=20}"
+                    Click="deleteLogs"
+                    ToolTip="Deletes All Logs"/>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
     <Controls:MetroWindow.LeftWindowCommands>
         <Controls:WindowCommands>
-            <Button x:Name="buttonSettings" Content="Settings" Click="openSettingsWindow"/>
+            <Button Content="{iconPacks:PackIconOcticons Home, Width=20, Height=20}"
+                    Click="buttonHome"
+                    ToolTip="Returns the view to the Main view"/>
         </Controls:WindowCommands>
     </Controls:MetroWindow.LeftWindowCommands>
-    <Controls:MetroWindow.Flyouts>
-        <Controls:FlyoutsControl>
-            <Controls:Flyout x:Name="flyoutSettings" Header="Settings" Position="Right" Width="500" CloseButtonVisibility="Collapsed">
-                <!-- Your custom content here -->
-            </Controls:Flyout>
-        </Controls:FlyoutsControl>
-    </Controls:MetroWindow.Flyouts>
-    <Grid>
+    <Grid x:Name="sabre">
         <Grid x:Name="main">
-            <Controls:Tile Title="Skin Collection" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280">
+            <Controls:Tile x:Name="tileSkinCollection" Title="Skin Collection" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Click="openSkinCollection">
                 <Rectangle Width="280" Height="109" Margin="0,-30,0,0">
                     <Rectangle.Fill>
                         <VisualBrush Visual="{StaticResource appbar_layer}" Stretch="Uniform"/>
                     </Rectangle.Fill>
                 </Rectangle>
             </Controls:Tile>
-            <Controls:Tile Title="Skin Collection" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Margin="72,276,922,275">
+            <Controls:Tile x:Name="tileSkinCreation" Title="Skin Creation" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Margin="72,276,922,275" Click="openSkinCreation">
                 <Rectangle Width="280" Height="109" Margin="0,-30,0,0">
                     <Rectangle.Fill>
                         <VisualBrush Visual="{StaticResource appbar_page_bold}" Stretch="Uniform"/>
                     </Rectangle.Fill>
                 </Rectangle>
             </Controls:Tile>
+            <Controls:Tile x:Name="tileSettings" Title="Settings" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Margin="935,276,59,275" Click="openSettings">
+                <Rectangle Width="280" Height="109" Margin="0,-30,0,0">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_settings}" Stretch="Uniform"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Controls:Tile>
+        </Grid>
+        <Grid x:Name="gridSettings" Visibility="Hidden">
+            
+        </Grid>
+        <Grid x:Name="gridSkinCollection" Visibility="Hidden">
+
+        </Grid>
+        <Grid x:Name="gridSkinCreation" Visibility="Hidden">
+
         </Grid>
     </Grid>
 </Controls:MetroWindow>

@@ -9,6 +9,7 @@ namespace Sabre
         public Logger(string time)
         {
             Time = time;
+            Directory.CreateDirectory("Logs");
             var f = File.Create(Environment.CurrentDirectory + "\\Logs\\" + "log - " + Time + ".txt");
             f.Dispose();
             f.Close();

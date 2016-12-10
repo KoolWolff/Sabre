@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows.Controls;
 using zlib;
 
 namespace Sabre
@@ -39,6 +40,11 @@ namespace Sabre
                 output.Write(buffer, 0, len);
             }
             output.Flush();
+        }
+        public static void SwitchGrids(Grid hider, Grid shower)
+        {
+            hider.Visibility = System.Windows.Visibility.Hidden;
+            shower.Visibility = System.Windows.Visibility.Visible;
         }
     }
 }
