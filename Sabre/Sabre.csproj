@@ -76,8 +76,7 @@
     <Compile Include="Code\Files\League of Legends\BNK\WwiseBank.cs" />
     <Compile Include="Code\Files\League of Legends\BNK\WwiseBankObject.cs" />
     <Compile Include="Code\Files\League of Legends\BNK\WwiseBankSection.cs" />
-    <Compile Include="Code\Files\Sabre\CFGFileRead.cs" />
-    <Compile Include="Code\Files\Sabre\CFGFileSave.cs" />
+    <Compile Include="Code\Files\Sabre\Config.cs" />
     <Compile Include="Code\Files\Sabre\DBFile.cs" />
     <Compile Include="Code\Files\League of Legends\MOBFile.cs" />
     <Compile Include="Code\Files\League of Legends\NVRFile.cs" />

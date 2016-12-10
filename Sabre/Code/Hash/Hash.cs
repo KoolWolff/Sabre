@@ -486,5 +486,26 @@ namespace Sabre
             }
             return hash;
         }
+        public static UInt32 ConfigChecksum(UInt32 entryCount, List<Config.Entry> entries)
+        {
+            string magic = "SCFG";
+            UInt32 checksum = entryCount;
+            foreach(Config.Entry e in entries)
+            {
+                if(e.entryType == Config.EntryType.String)
+                {
+                    checksum *= e.StringLength;
+                }
+                else if(e.entryType == Config.EntryType.UInt)
+                {
+                    checksum *= e.UIntValue;
+                }
+                for(int i = 0; i < 4; i++)
+                {
+                    checksum ^= magic[i];
+                }
+            }
+            return checksum;
+        }
     }
 }
