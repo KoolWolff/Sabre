@@ -27,6 +27,13 @@
                     </Rectangle.Fill>
                 </Rectangle>
             </Controls:Tile>
+            <Controls:Tile Title="Skin Collection" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Margin="72,276,922,275">
+                <Rectangle Width="280" Height="109" Margin="0,-30,0,0">
+                    <Rectangle.Fill>
+                        <VisualBrush Visual="{StaticResource appbar_page_bold}" Stretch="Uniform"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Controls:Tile>
         </Grid>
     </Grid>
 </Controls:MetroWindow>
