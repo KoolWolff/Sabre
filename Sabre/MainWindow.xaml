@@ -6,7 +6,7 @@
                       Title="Sabre"
                       Height="720"
                       Width="1280" ResizeMode="NoResize"
-                      GlowBrush="{DynamicResource AccentColorBrush}">
+                      GlowBrush="{DynamicResource AccentColorBrush}" KeyDown="MetroWindow_KeyDown">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Content="{iconPacks:PackIconOcticons MarkGithub, Width=20, Height=20}"
@@ -48,7 +48,7 @@
                 </Rectangle>
             </Controls:Tile>
         </Grid>
-        <Grid x:Name="gridSettings">
+        <Grid x:Name="gridSettings" Visibility="Hidden">
             <GroupBox x:Name="groupAppearance" Header="Appearance" HorizontalAlignment="Left" Height="121" Margin="10,10,0,0" VerticalAlignment="Top" Width="268">
                 <Grid>
                     <Label x:Name="labelTheme" Content="Theme" HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" VerticalAlignment="Top" Width="47" Background="{x:Null}"/>
@@ -58,13 +58,60 @@
 
                 </Grid>
             </GroupBox>
+            <GroupBox x:Name="groupPaths" Header="Paths" HorizontalAlignment="Left" Height="293" Margin="283,10,0,0" VerticalAlignment="Top" Width="981">
+                <Grid>
+                    <Label x:Name="labelLoLPath" Content="League of Legends" HorizontalAlignment="Left" Height="26" Margin="10,10,0,0" VerticalAlignment="Top" Width="110" Background="#00000000"/>
+                    <TextBox x:Name="textLoLPath" HorizontalAlignment="Left" Height="14" Margin="124,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="809" IsReadOnly="True"/>
+                    <Button x:Name="btnLoLPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}"
+                    ToolTip="Choose your League of Legends path" Margin="937,11,10,217"/>
+                    <Label x:Name="labelWADOpenPath" Content="WAD Path" HorizontalAlignment="Left" Height="26" Margin="10,41,0,0" VerticalAlignment="Top" Width="110" Background="#00000000"/>
+                    <TextBox x:Name="textWADPath" HorizontalAlignment="Left" Height="14" Margin="124,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="809" IsReadOnly="True"/>
+                    <Button x:Name="btnWADPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Height=13, Width=12}"
+                        ToolTip="Choose the path for WAD Files" Margin="937,42,10,186"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox x:Name="groupEnums" Header="Booleans" HorizontalAlignment="Left" Height="293" Margin="283,308,0,0" VerticalAlignment="Top" Width="981">
+                <Grid>
 
+                </Grid>
+            </GroupBox>
         </Grid>
         <Grid x:Name="gridSkinCollection" Visibility="Hidden">
 
         </Grid>
         <Grid x:Name="gridSkinCreation" Visibility="Hidden">
-
+            <Controls:Tile x:Name="tileWADExtractor" Margin="10,10,1056,473" Height="Auto" Width="Auto" Click="tileWADExtractor_Click">
+                <Grid Height="198">
+                    <Rectangle Width="198" Height="161" Margin="0,0,0,25">
+                        <Rectangle.Fill>
+                            <VisualBrush Visual="{StaticResource appbar_page_text}" Stretch="Uniform"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Grid Margin="0,172,0,0">
+                        <Label Content="WAD Extractor" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" Margin="49,0"/>
+                    </Grid>
+                </Grid>
+            </Controls:Tile>
+        </Grid>
+        <Grid x:Name="gridWADExtractor">
+            <DataGrid x:Name="dataWADExtractor" Margin="0,0,0,117" ItemsSource="{Binding Entries}">
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn ElementStyle="{DynamicResource MetroDataGridCheckBox}"
+                                        EditingElementStyle="{DynamicResource MetroDataGridCheckBox}"
+                                        Header="Extract"
+                                        Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=IsSelected, Mode=OneWay}"
+                                        />
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBox x:Name="textWADExtractorPath" HorizontalAlignment="Left" Height="12" Margin="10,579,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="1229" IsReadOnly="True"/>
+            <Button x:Name="btnWADExtractorPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}"
+                    ToolTip="Sabre GitHub repository" Margin="1244,579,10,87" Width="20" Height="20" Click="btnWADExtractorPath_Click"/>
+            <GroupBox x:Name="groupWADTools" Header="Tools" HorizontalAlignment="Left" Height="71" Margin="10,610,0,0" VerticalAlignment="Top" Width="1254">
+                <Grid Margin="0,0,1050,0">
+                    <Button x:Name="btnWADExtractSelected" Content="Extract Selected" Click="btnWADExtractSelected_Click"/>
+                    <Button x:Name="btnWADExtractAll" Content="Extract All" Margin="197,0,-197,0" Click="btnWADExtractAll_Click"/>
+                </Grid>
+            </GroupBox>
         </Grid>
     </Grid>
 </Controls:MetroWindow>

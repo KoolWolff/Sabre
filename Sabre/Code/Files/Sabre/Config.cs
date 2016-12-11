@@ -9,68 +9,28 @@ namespace Sabre
 {
     class Config
     {
-        public byte Version;
-        public string Magic;
-        public UInt32 EntryCount;
-        public UInt32 Checksum;
-        public BinaryReader br;
-        public List<Entry> Entries = new List<Entry>();
+        public uint SettingCount;
+        public StreamReader sw;
+        public List<string> Entries = new List<string>();
         public Config(string fileLocation, Logger log)
         {
-            br = new BinaryReader(File.OpenRead(fileLocation));
-
-            Version = br.ReadByte();
-            Magic = Encoding.ASCII.GetString(br.ReadBytes(4));
-            if(Magic != "SCFG")
-                log.Write("CFG::IO | INCORRECT CONFIG FILE", Logger.WriterType.WriteError);
-            EntryCount = br.ReadUInt32();
-            Checksum = br.ReadUInt32();
-            for(int i = 0; i < EntryCount; i++)
+            SettingCount = (uint)File.ReadLines(fileLocation).Count();
+            using (sw = new StreamReader(File.OpenRead(fileLocation)))
             {
-                Entries.Add(new Entry(br));
-            }
-            if(Checksum != Hash.ConfigChecksum(EntryCount, Entries))
-                log.Write("CFG::IO | INCORRECT CONFIG CHECKSUM", Logger.WriterType.WriteError);
-        }
-        public class Entry
-        {
-            public SettingType Type;
-            public EntryType entryType;
-            public UInt16 StringLength;
-            public string StringValue;
-            public UInt32 UIntValue;
-            public bool Enum;
-            public Entry(BinaryReader br)
-            {
-                Type = (SettingType)br.ReadByte();
-                entryType = (EntryType)br.ReadByte();
-                switch(entryType)
+                for(int i = 0; i < SettingCount; i++)
                 {
-                    case EntryType.String:
-                        StringLength = br.ReadUInt16();
-                        StringValue = Encoding.ASCII.GetString(br.ReadBytes(StringLength));
-                        break;
-                    case EntryType.Bool:
-                        Enum = Convert.ToBoolean(br.ReadByte());
-                        break;
-                    case EntryType.UInt:
-                        UIntValue = br.ReadUInt32();
-                        break;
+                    Entries.Add(sw.ReadLine());
                 }
             }
         }
-        public enum SettingType : byte
+        public static void Write(string theme, string accent, string LoLPath)
         {
-            AccentColor = 0,
-            Theme = 1,
-            DetectLoLLocationOnStartup = 3,
-            LoLLocation = 4,
-        }
-        public enum EntryType : byte
-        {
-            String = 0,
-            Bool = 1,
-            UInt = 2
+            using (StreamWriter sw = new StreamWriter(File.OpenWrite("config.ini")))
+            {
+                sw.Write("Theme= " + theme + Environment.NewLine);
+                sw.Write("Accent= " + accent + Environment.NewLine);
+                sw.Write("LoLPath= " + LoLPath + Environment.NewLine);
+            }
         }
     }
 }

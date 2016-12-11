@@ -13,7 +13,7 @@ namespace Sabre
         public BinaryReader br;
         public Header header;
         public List<Entry> Entries = new List<Entry>();
-        public WADFile(string fileLocation)
+        public WADFile(string fileLocation, Logger log, List<string> Hashes)
         {
             br = new BinaryReader(File.Open(fileLocation, FileMode.Open));
             header = new Header(br);
@@ -23,15 +23,40 @@ namespace Sabre
             }
             foreach(Entry e in Entries)
             {
-                if(e.TypeOfCompression == CompressionType.Compressed)
+                if(e.Compression == CompressionType.Compressed)
                 {
                     br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
                     e.Data = br.ReadBytes((int)e.CompressedSize);
+                    e.Data = Functions.DecompressGZip(e.Data);
+                    e.Name = Hashes.Find(x => Hash.XXHash(x) == e.XXHash);
+                    if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
+                    {
+                        e.Compression = CompressionType.BIN;
+                    }
                 }
-                else if(e.TypeOfCompression == CompressionType.String)
+                else if(e.Compression == CompressionType.String)
                 {
                     br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
                     e.Name = Encoding.ASCII.GetString(br.ReadBytes((int)br.ReadUInt32()));
+                    if(e.Name.Contains("events.bnk"))
+                    {
+                        e.Compression = CompressionType.StringEventBank;
+                    }
+                    else if(e.Name.Contains("audio.bnk"))
+                    {
+                        e.Compression = CompressionType.StringAudioBank;
+                    }
+                }
+                else if(e.Compression == CompressionType.Uncompressed)
+                {
+                    br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
+                    e.Data = br.ReadBytes((int)e.UncompressedSize);
+                    e.Name = Hashes.Find(x => Hash.XXHash(x) == e.XXHash);
+                }
+                else
+                {
+                    e.Compression = CompressionType.Unknown;
+                    continue;
                 }
             }
         }
@@ -41,7 +66,7 @@ namespace Sabre
             public byte Major;
             public byte Minor;
             public byte ECDSALength;
-            public byte[] ECDSA;
+            public byte[] ECDSA {get; set;}
             public byte[] ZeroPadding;
             public UInt64 Checksum;
             public UInt16 TOCStartOffset;
@@ -63,22 +88,22 @@ namespace Sabre
         }
         public class Entry
         {
-            public string FileSize;
-            public string Name;
+            public string FileSize { get; set; }
+            public string Name { get; set; }
             public byte[] Data;
-            public UInt64 XXHashFilePath;
+            public string XXHash { get; set; }
             public UInt32 FileDataOffset;
             public UInt32 CompressedSize;
             public UInt32 UncompressedSize;
-            public CompressionType TypeOfCompression;
+            public CompressionType Compression { get; set; }
             public UInt64 SHA256;
             public Entry(BinaryReader br)
             {
-                XXHashFilePath = br.ReadUInt64();
+                XXHash = br.ReadUInt64().ToString("X2");
                 FileDataOffset = br.ReadUInt32();
                 CompressedSize = br.ReadUInt32();
                 UncompressedSize = br.ReadUInt32();
-                TypeOfCompression = (CompressionType)br.ReadUInt32();
+                Compression = (CompressionType)br.ReadUInt32();
                 SHA256 = br.ReadUInt64();
                 FileSize = Functions.SizeSuffix(UncompressedSize);
             }
@@ -87,29 +112,11 @@ namespace Sabre
         {
             Uncompressed = 0,
             Compressed = 1,
-            String = 2
-        }
-        static byte[] Decompress(byte[] gzip)
-        {
-            using (GZipStream stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
-            {
-                const int size = 4096;
-                byte[] buffer = new byte[size];
-                using (MemoryStream memory = new MemoryStream())
-                {
-                    int count = 0;
-                    do
-                    {
-                        count = stream.Read(buffer, 0, size);
-                        if (count > 0)
-                        {
-                            memory.Write(buffer, 0, count);
-                        }
-                    }
-                    while (count > 0);
-                    return memory.ToArray();
-                }
-            }
+            String = 2,
+            BIN,
+            StringAudioBank,
+            StringEventBank,
+            Unknown
         }
     }
 }
