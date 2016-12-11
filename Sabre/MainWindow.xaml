@@ -6,7 +6,8 @@
                       Title="Sabre"
                       Height="720"
                       Width="1280" ResizeMode="NoResize"
-                      GlowBrush="{DynamicResource AccentColorBrush}" KeyDown="MetroWindow_KeyDown">
+                      GlowBrush="{DynamicResource AccentColorBrush}" 
+                      KeyDown="MetroWindow_KeyDown">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Content="{iconPacks:PackIconOcticons MarkGithub, Width=20, Height=20}"
