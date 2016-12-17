@@ -93,8 +93,20 @@
                     </Grid>
                 </Grid>
             </Controls:Tile>
+            <Controls:Tile x:Name="tileMOBEditor" Margin="223,10,843,473" Height="Auto" Width="Auto" Click="tileMOBEditor_Click">
+                <Grid Height="198">
+                    <Rectangle Width="198" Height="161" Margin="0,0,0,25">
+                        <Rectangle.Fill>
+                            <VisualBrush Visual="{StaticResource appbar_axis_three}" Stretch="Uniform"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Grid Margin="0,172,0,0">
+                        <Label Content="MOB Editor" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" Margin="49,0"/>
+                    </Grid>
+                </Grid>
+            </Controls:Tile>
         </Grid>
-        <Grid x:Name="gridWADExtractor">
+        <Grid x:Name="gridWADExtractor" Visibility="Hidden">
             <DataGrid x:Name="dataWADExtractor" Margin="0,0,0,117" ItemsSource="{Binding Entries}">
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn ElementStyle="{DynamicResource MetroDataGridCheckBox}"
@@ -113,6 +125,19 @@
                     <Button x:Name="btnWADExtractAll" Content="Extract All" Margin="197,0,-197,0" Click="btnWADExtractAll_Click"/>
                 </Grid>
             </GroupBox>
+        </Grid>
+        <Grid x:Name="gridMOBEditor">
+            <DataGrid x:Name="dataMOBEditor" Margin="0,0,0,117" ItemsSource="{Binding Entries}" IsTextSearchEnabled="True"/>
+            <TextBox x:Name="textMOBEditorPath" HorizontalAlignment="Left" Height="12" Margin="10,579,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="1229" IsReadOnly="True"/>
+            <Button x:Name="btnMOBEditorPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}"
+                    ToolTip="Select the path for your MOB file" Margin="1244,579,10,86" Width="20" Click="btnMOBEditorPath_Click"/>
+            <GroupBox x:Name="groupMOBTools" Header="Tools" HorizontalAlignment="Left" Height="71" Margin="10,610,0,0" VerticalAlignment="Top" Width="1254">
+                <Grid Margin="0,0,1050,0">
+                    <Button x:Name="btnMOBEditorAddEntry" Content="Add Entry" Click="btnMOBEditorAddEntry_Click"/>
+                    <Button x:Name="btnMOBEditorSave" Content="Save MOB" Margin="1052,0,-1052,0" Click="btnMOBEditorSave_Click"/>
+                </Grid>
+            </GroupBox>
+
         </Grid>
     </Grid>
 </Controls:MetroWindow>

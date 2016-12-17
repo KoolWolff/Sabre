@@ -28,6 +28,8 @@ namespace Sabre
         private string ecdsa;
         private StreamReader wadHashReader;
         private WADFile wad;
+        private MOBFile mob;
+        private uint MOBEntryNumber = 0;
         public List<string> WADHashes = new List<string>();
         public MainWindow()
         {
@@ -42,6 +44,11 @@ namespace Sabre
             {
                 WADHashes.Add(wadHashReader.ReadLine());
             } while(wadHashReader.BaseStream.Position != wadHashReader.BaseStream.Length);
+            wadHashReader = new StreamReader(File.OpenRead("BIN.txt"));
+            do
+            {
+                WADHashes.Add(wadHashReader.ReadLine());
+            } while (wadHashReader.BaseStream.Position != wadHashReader.BaseStream.Length);
         }
         
         private void buttonGit(object sender, RoutedEventArgs e)
@@ -128,12 +135,12 @@ namespace Sabre
 
         private void btnWADExtractAll_Click(object sender, RoutedEventArgs e)
         {
-            Functions.ExtractWAD(dataWADExtractor.SelectedItems, wad.Entries, Functions.ExtractionType.All, WADHashes);
+            Functions.ExtractWAD(wad.Entries, WADHashes);
         }
 
         private void btnWADExtractSelected_Click(object sender, RoutedEventArgs e)
         {
-            Functions.ExtractWAD(dataWADExtractor.SelectedItems, wad.Entries, Functions.ExtractionType.Selected, WADHashes);
+            Functions.ExtractWAD(dataWADExtractor.SelectedItems, WADHashes);
         }
 
         private void MetroWindow_KeyDown(object sender, KeyEventArgs e)
@@ -142,6 +149,34 @@ namespace Sabre
             {
                 MessageBox.Show(ecdsa);
             }
+        }
+
+        private void tileMOBEditor_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.SwitchGrids(gridSkinCreation, gridMOBEditor);
+        }
+
+        private void btnMOBEditorPath_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            if (ofd.ShowDialog() == true)
+            {
+                mob = new MOBFile(ofd.FileName);
+                dataMOBEditor.ItemsSource = mob.MobObjects;
+                textMOBEditorPath.Text = ofd.FileName;
+            }
+        }
+
+        private void btnMOBEditorSave_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.SaveMOB(mob, dataMOBEditor.Items);
+        }
+
+        private void btnMOBEditorAddEntry_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.AddMOBEntry(dataMOBEditor.Items, MOBEntryNumber);
+            dataMOBEditor.ItemsSource = mob.MobObjects;
+            MOBEntryNumber++;
         }
     }
 }

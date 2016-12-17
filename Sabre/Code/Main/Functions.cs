@@ -118,86 +118,164 @@ namespace Sabre
                 return "";
             }
         }
-        public static void ExtractWAD(System.Collections.IList entries, List<WADFile.Entry> entriesAll, ExtractionType typeOfExtraction, List<string> Hashes)
+        public static void ExtractWAD(System.Collections.IList entries, List<string> Hashes)
         {
-            if(typeOfExtraction == ExtractionType.All)
+            foreach (WADFile.Entry e in entries)
             {
-                foreach(var e in entriesAll)
+                if (e.Compression == WADFile.CompressionType.String)
                 {
-                    if (e.Compression == WADFile.CompressionType.String)
+                    continue;
+                }
+                else
+                {
+                    if (e.Name == null)
                     {
-                        continue;
-                    }
-                    else
-                    {
-                        if (e.Name == null)
+                        Directory.CreateDirectory("WAD Extract//Unknown");
+                        if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
                         {
-                            Directory.CreateDirectory("WAD Extract//Unknown");
-                            if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
-                            {
-                                var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash + ".bin");
-                                f.Dispose();
-                                f.Close();
-                                File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash + ".bin", e.Data);
-                            }
-                            else
-                            {
-                                var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash);
-                                f.Dispose();
-                                f.Close();
-                                File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash, e.Data);
-                            }
+                            var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash + ".bin");
+                            f.Dispose();
+                            f.Close();
+                            File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash + ".bin", e.Data);
                         }
                         else
                         {
-                            Directory.CreateDirectory(Path.GetDirectoryName(e.Name));
-                            var f = File.Create(e.Name);
+                            var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash);
                             f.Dispose();
                             f.Close();
+                            File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash, e.Data);
                         }
-                    }
-                }
-                GC.Collect();
-            }
-            else
-            {
-                foreach (WADFile.Entry e in entries)
-                {
-                    if (e.Compression == WADFile.CompressionType.String)
-                    {
-                        continue;
                     }
                     else
                     {
-                        if (e.Name == null)
+                        Directory.CreateDirectory(Path.GetDirectoryName(e.Name));
+                        var f = File.Create(e.Name);
+                        f.Dispose();
+                        f.Close();
+                    }
+                }
+            }
+            GC.Collect();
+        }
+        public static void ExtractWAD(List<WADFile.Entry> entriesAll, List<string> Hashes)
+        {
+            foreach (var e in entriesAll)
+            {
+                if (e.Compression == WADFile.CompressionType.String)
+                {
+                    continue;
+                }
+                else
+                {
+                    if (e.Name == null)
+                    {
+                        Directory.CreateDirectory("WAD Extract//Unknown");
+                        if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
                         {
-                            Directory.CreateDirectory("WAD Extract//Unknown");
-                            if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
-                            {
-                                var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash + ".bin");
-                                f.Dispose();
-                                f.Close();
-                                File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash + ".bin", e.Data);
-                            }
-                            else
-                            {
-                                var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash);
-                                f.Dispose();
-                                f.Close();
-                                File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash, e.Data);
-                            }
+                            var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash + ".bin");
+                            f.Dispose();
+                            f.Close();
+                            File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash + ".bin", e.Data);
                         }
                         else
                         {
-                            Directory.CreateDirectory(Path.GetDirectoryName(e.Name));
-                            var f = File.Create(e.Name);
+                            var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash);
                             f.Dispose();
                             f.Close();
+                            File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash, e.Data);
                         }
                     }
+                    else
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(e.Name));
+                        var f = File.Create(e.Name);
+                        f.Dispose();
+                        f.Close();
+                    }
                 }
-                GC.Collect();
             }
+            GC.Collect();
+        }
+        public static byte[] StringToByteArray(string str)
+        {
+            byte[] bytes = new byte[str.Length * sizeof(char)];
+            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            return bytes;
+        }
+        public static void SaveMOB(MOBFile mob, System.Collections.IList entries)
+        {
+            Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
+            sfd.Title = "Select the path where you want to save your MOB file";
+            sfd.Filter = "MOB File | *.mob";
+            sfd.DefaultExt = "mob";
+
+            if(sfd.ShowDialog() == true)
+            {
+                using (BinaryWriter bw = new BinaryWriter(File.OpenWrite(sfd.FileName)))
+                {
+                    bw.Write(mob.Magic.ToCharArray());
+                    bw.Write(mob.Version);
+                    bw.Write((UInt32)entries.Count);
+                    bw.Write(mob.Zero);
+                    foreach(MOBFile.MOBObject o in entries)
+                    {
+                        bw.Write(o.Name.ToCharArray());
+                        if(o.Name.Length != 60)
+                        {
+                            for(int i = o.Name.Length; i < 60; i++)
+                            {
+                                bw.Write((byte)0);
+                            }
+                        }
+                        bw.Write((UInt16)o.ObjectZero1);
+                        bw.Write((byte)o.Flag);
+                        bw.Write((byte)o.ObjectZero2);
+
+                        bw.Write(o.Position__X);
+                        bw.Write(o.Position__Y);
+                        bw.Write(o.Position__Z);
+
+                        bw.Write(o.Rotation__X);
+                        bw.Write(o.Rotation__Y);
+                        bw.Write(o.Rotation__Z);
+
+                        bw.Write(o.Scaling__X);
+                        bw.Write(o.Scaling__Y);
+                        bw.Write(o.Scaling__Z);
+
+                        bw.Write(o.Healthbar__X);
+                        bw.Write(o.Healthbar__Y);
+                        bw.Write(o.Healthbar__Z);
+
+                        bw.Write(o.Healthbar__Bounding__X);
+                        bw.Write(o.Healthbar__Bounding__Y);
+                        bw.Write(o.Healthbar__Bounding__Z);
+
+                        bw.Write((UInt32)o.ObjectZero3);
+                    }
+                }
+            }
+        }
+        public static void AddMOBEntry(ItemCollection entries, uint entryNumber)
+        {
+            BinaryWriter bw = new BinaryWriter(File.OpenWrite("tempentry"));
+            bw.Write(ModifyMOBName("EntryName" + entryNumber).ToCharArray());
+            bw.Write(new byte[68]);
+            bw.Dispose();
+            bw.Close();
+            BinaryReader br = new BinaryReader(File.OpenRead("tempentry"));
+            entries.Add(new MOBFile.MOBObject(br));
+            br.Dispose();
+            br.Close();
+            File.Delete("tempentry");
+        }
+        public static string ModifyMOBName(string name)
+        {
+            for(int i = name.Length; i < 60; i++)
+            {
+                name += "\0";
+            }
+            return name;
         }
         public enum ExtractionType
         {
@@ -688,7 +766,7 @@ namespace Sabre
         {
             string hash = "";
             xxHash xx = new xxHash();
-            byte[] temp = xx.ComputeHash(toHash);
+            byte[] temp = xx.ComputeHash(toHash, 64);
             foreach (byte b in temp)
             {
                 hash += b.ToString("X2");

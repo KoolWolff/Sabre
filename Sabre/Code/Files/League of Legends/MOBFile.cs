@@ -33,10 +33,10 @@ namespace Sabre
         }
         public class MOBObject
         {
-            public string MOBObjectName;
+            public string Name {get; set; }
             public char[] MOBObjectNameChar;
             public uint ObjectZero1 = 0;
-            public MapObjectType ObjectFlag;
+            public MapObjectType Flag { get; set; }
             public byte ObjectZero2 = 0;
             public float[] Position = new float[3];
             public float[] Rotation = new float[3];
@@ -44,13 +44,34 @@ namespace Sabre
             public float[] HealthBarPosition1 = new float[3];
             public float[] HealthBarPosition2 = new float[3];
             public uint ObjectZero3 = 0;
+            #region DataBindedProps
+            public float Position__X { get; set; }
+            public float Position__Y { get; set; }
+            public float Position__Z { get; set; }
+
+            public float Rotation__X { get; set; }
+            public float Rotation__Y { get; set; }
+            public float Rotation__Z { get; set; }
+
+            public float Scaling__X { get; set; }
+            public float Scaling__Y { get; set; }
+            public float Scaling__Z { get; set; }
+
+            public float Healthbar__X { get; set; }
+            public float Healthbar__Y { get; set; }
+            public float Healthbar__Z { get; set; }
+
+            public float Healthbar__Bounding__X { get; set; }
+            public float Healthbar__Bounding__Y { get; set; }
+            public float Healthbar__Bounding__Z { get; set; }
+            #endregion
             public MOBObject(BinaryReader br)
             {
-                MOBObjectName = Encoding.ASCII.GetString(br.ReadBytes(60));
-                MOBObjectNameChar = GetCharsFromString(MOBObjectName, 60);
-                MOBObjectName = GetStringFromChars(MOBObjectNameChar);
+                Name = Encoding.ASCII.GetString(br.ReadBytes(60));
+                MOBObjectNameChar = GetCharsFromString(Name, 60);
+                Name = GetStringFromChars(MOBObjectNameChar);
                 ObjectZero1 = br.ReadUInt16();
-                ObjectFlag = (MapObjectType)br.ReadByte();
+                Flag = (MapObjectType)br.ReadByte();
                 ObjectZero2 = br.ReadByte();
                 for (int i = 0; i < 3; i++)
                 {
@@ -73,6 +94,25 @@ namespace Sabre
                     HealthBarPosition2[i] = br.ReadSingle();
                 }
                 ObjectZero3 = br.ReadUInt32();
+                Position__X = Position[0];
+                Position__Y = Position[1];
+                Position__Z = Position[2];
+
+                Rotation__X = Rotation[0];
+                Rotation__Y = Rotation[1];
+                Rotation__Z = Rotation[2];
+
+                Scaling__X = Scale[0];
+                Scaling__Y = Scale[1];
+                Scaling__Z = Scale[2];
+            
+                Healthbar__X = HealthBarPosition1[0];
+                Healthbar__Y = HealthBarPosition1[1];
+                Healthbar__Z = HealthBarPosition1[2];
+
+                Healthbar__Bounding__X = HealthBarPosition2[0];
+                Healthbar__Bounding__Y = HealthBarPosition2[1];
+                Healthbar__Bounding__Z = HealthBarPosition2[2];
             }
         }
         public enum MapObjectType : byte {
@@ -82,6 +122,8 @@ namespace Sabre
             Barrack = 3,
             Nexus = 4,
             Turret = 5,
+            Shop = 6,
+            Lake = 7,
             Nav = 8,
             Info = 9,
             LevelProp = 10 };
