@@ -49,6 +49,8 @@ namespace Sabre
             {
                 WADHashes.Add(wadHashReader.ReadLine());
             } while (wadHashReader.BaseStream.Position != wadHashReader.BaseStream.Length);
+            UInt32 t = Hash.Adler32(Functions.StringToByteArray("Hello "));
+            ReleaseManifestFile rlmn = new ReleaseManifestFile("0.0.1.95.bkp.rlsm");
         }
         
         private void buttonGit(object sender, RoutedEventArgs e)

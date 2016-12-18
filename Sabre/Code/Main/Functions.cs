@@ -202,6 +202,46 @@ namespace Sabre
             System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
             return bytes;
         }
+        public static string ByteArrayToString(byte[] arr, StringCaseType caseType)
+        {
+            string s = "";
+            foreach (byte b in arr)
+            {
+                if (caseType == StringCaseType.Lowercase) s += b.ToString("x2");
+                else s += b.ToString("X2");
+            }
+            return s;
+        }
+        public static string ByteArrayToString(byte[] arr)
+        {
+            string s = "";
+            foreach (byte b in arr)
+            {
+                s += b;
+            }
+            return s;
+        }
+        public static string ReadNullTerminatedString(BinaryReader br) //Not sure if this will work efficently
+        {
+            string s = "";
+            do
+            {
+                s += br.ReadChar();
+            } while (s.IndexOf('\u0000') == -1);
+            s = s.Replace("\0", string.Empty);
+            return s;
+        }
+        public static string ReadNullTerminatedString(BinaryReader br, long offset)
+        {
+            br.BaseStream.Seek(offset, SeekOrigin.Begin);
+            string s = "";
+            do
+            {
+                s += br.ReadChar();
+            } while (s.IndexOf('\u0000') == -1);
+            s = s.Replace("\0", string.Empty);
+            return s;
+        }
         public static void SaveMOB(MOBFile mob, System.Collections.IList entries)
         {
             Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
@@ -277,10 +317,10 @@ namespace Sabre
             }
             return name;
         }
-        public enum ExtractionType
+        public enum StringCaseType
         {
-            Selected,
-            All
+            Uppercase,
+            Lowercase
         }
     }
     class Hash
@@ -772,6 +812,17 @@ namespace Sabre
                 hash += b.ToString("X2");
             }
             return hash;
+        }
+        public static UInt32 Adler32(byte[] toHash)
+        {
+            const int MOD_ADLER = 65521;
+            UInt32 a = 1, b = 0;
+            for (int i = 0; i < toHash.Length; ++i)
+            {
+                a = (a + toHash[i]) % MOD_ADLER;
+                b = (b + a) % MOD_ADLER;
+            }
+            return (b << 16) | a;
         }
     }
 }

@@ -10,7 +10,10 @@ namespace Sabre
     {
         public EasterEgg(EasterEggType type, MainWindow mw)
         {
+            if(type == EasterEggType.Doggo)
+            {
 
+            }
         }
         public enum EasterEggType
         {
