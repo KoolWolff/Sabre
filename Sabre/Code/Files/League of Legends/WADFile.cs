@@ -56,7 +56,6 @@ namespace Sabre
                 else
                 {
                     e.Compression = CompressionType.Unknown;
-                    continue;
                 }
             }
         }

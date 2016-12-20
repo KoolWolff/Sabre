@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using MahApps.Metro;
 using System.IO;
+using SabreAPI;
 
 namespace Sabre
 {
@@ -26,7 +27,6 @@ namespace Sabre
         private Logger log;
         private Config cfg;
         private string ecdsa;
-        private StreamReader wadHashReader;
         private WADFile wad;
         private MOBFile mob;
         private uint MOBEntryNumber = 0;
@@ -39,18 +39,8 @@ namespace Sabre
             log.Write("SABRE INITIALIZED", Logger.WriterType.WriteMessage);
             cfg = new Config("config.ini", log);
             Functions.LoadSettings(cfg, this);
-            wadHashReader = new StreamReader(File.OpenRead("WAD.txt"));
-            do
-            {
-                WADHashes.Add(wadHashReader.ReadLine());
-            } while(wadHashReader.BaseStream.Position != wadHashReader.BaseStream.Length);
-            wadHashReader = new StreamReader(File.OpenRead("BIN.txt"));
-            do
-            {
-                WADHashes.Add(wadHashReader.ReadLine());
-            } while (wadHashReader.BaseStream.Position != wadHashReader.BaseStream.Length);
-            UInt32 t = Hash.Adler32(Functions.StringToByteArray("Hello "));
-            ReleaseManifestFile rlmn = new ReleaseManifestFile("0.0.1.95.bkp.rlsm");
+            WADHashes = HASH.GetWADHashes(REST.GetCharacters(true), Environment.CurrentDirectory, 15);
+            string tmp = Hash.XXHash("DATA/Characters/Aatrox/Skins/Skin0.bin"); // X2 - F2061FA001024CF7 X - F261FA0124CF7
         }
         
         private void buttonGit(object sender, RoutedEventArgs e)

@@ -806,10 +806,10 @@ namespace Sabre
         {
             string hash = "";
             xxHash xx = new xxHash();
-            byte[] temp = xx.ComputeHash(toHash, 64);
+            byte[] temp = xx.ComputeHash(toHash, 128);
             foreach (byte b in temp)
             {
-                hash += b.ToString("X2");
+                hash += b.ToString("X");
             }
             return hash;
         }
