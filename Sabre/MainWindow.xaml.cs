@@ -150,6 +150,7 @@ namespace Sabre
         private void btnMOBEditorPath_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.Filter = "MOB File (*.mob)|*.mob";
             if (ofd.ShowDialog() == true)
             {
                 mob = new MOBFile(ofd.FileName);
