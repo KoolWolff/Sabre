@@ -178,5 +178,10 @@ namespace Sabre
         {
             Functions.ExtractMOBEntries(dataMOBEditor.SelectedItems);
         }
+
+        private void tileWPKEditor_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.SwitchGrids(gridSkinCreation, gridWPKEditor);
+        }
     }
 }

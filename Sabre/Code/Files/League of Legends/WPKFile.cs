@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Collections.ObjectModel;
 
 namespace Sabre
 {
@@ -11,8 +12,8 @@ namespace Sabre
     {
         public BinaryReader br;
         public Header header;
-        public List<AudioFile> AudioFiles = new List<AudioFile>();
-        public WPKFile(string fileLocation, bool extractAudio = false)
+        public ObservableCollection<AudioFile> AudioFiles = new ObservableCollection<AudioFile>();
+        public WPKFile(string fileLocation)
         {
             br = new BinaryReader(File.Open(fileLocation, FileMode.Open));
             header = new Header(br);
@@ -30,8 +31,7 @@ namespace Sabre
                 a.DataOffset = br.ReadUInt32();
                 a.DataSize = br.ReadUInt32();
                 a.NameLength = br.ReadUInt32();
-                a.tempName = br.ReadChars((int)a.NameLength * 2);
-                a.Name = GetWPKName(a.tempName);
+                a.Name = GetWPKName(br.ReadChars((int)a.NameLength * 2));
                 br.ReadUInt16();
                 UInt16 zero1 = br.ReadUInt16();
                 if(zero1 != 0)
@@ -41,13 +41,6 @@ namespace Sabre
             }
             br.Dispose();
             br.Close();
-            if(extractAudio == true)
-            {
-                foreach(var a in AudioFiles)
-                {
-                    AudioFile.ExtractFile(fileLocation, a.Name, a.DataOffset, a.DataSize);
-                }
-            }
         }
         public class Header
         {
@@ -66,7 +59,6 @@ namespace Sabre
             public UInt32 DataOffset;
             public UInt32 DataSize;
             public UInt32 NameLength;
-            public char[] tempName;
             public string Name;
             public AudioFile(UInt32 metaOffset)
             {
