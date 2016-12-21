@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Collections.ObjectModel;
 
 namespace Sabre
 {
@@ -13,7 +14,7 @@ namespace Sabre
         public uint Version;
         public uint NumberOfObjects;
         public uint Zero;
-        public List<MOBObject> MobObjects = new List<MOBObject>();
+        public ObservableCollection<MOBObject> MobObjects = new ObservableCollection<MOBObject>();
         public MOBFile(string fileLocation)
         {
             BinaryReader br = new BinaryReader(File.Open(fileLocation, FileMode.Open));
@@ -106,6 +107,55 @@ namespace Sabre
                 Scaling__Y = Scale[1];
                 Scaling__Z = Scale[2];
             
+                Healthbar__X = HealthBarPosition1[0];
+                Healthbar__Y = HealthBarPosition1[1];
+                Healthbar__Z = HealthBarPosition1[2];
+
+                Healthbar__Bounding__X = HealthBarPosition2[0];
+                Healthbar__Bounding__Y = HealthBarPosition2[1];
+                Healthbar__Bounding__Z = HealthBarPosition2[2];
+            }
+            public MOBObject(string name)
+            {
+                Name = name;
+                MOBObjectNameChar = GetCharsFromString(Name, Name.Length);
+                Name = GetStringFromChars(MOBObjectNameChar);
+                ObjectZero1 = 0;
+                Flag = MapObjectType.LevelProp;
+                ObjectZero2 = 0;
+                for (int i = 0; i < 3; i++)
+                {
+                    Position[i] = 0;
+                }
+                for (int i = 0; i < 3; i++)
+                {
+                    Rotation[i] = 0;
+                }
+                for (int i = 0; i < 3; i++)
+                {
+                    Scale[i] = 0;
+                }
+                for (int i = 0; i < 3; i++)
+                {
+                    HealthBarPosition1[i] = 0;
+                }
+                for (int i = 0; i < 3; i++)
+                {
+                    HealthBarPosition2[i] = 0;
+                }
+                ObjectZero3 = 0;
+                Position__X = Position[0];
+                Position__Y = Position[1];
+                Position__Z = Position[2];
+
+                Rotation__X = Rotation[0];
+                Rotation__Y = Rotation[1];
+                Rotation__Z = Rotation[2];
+
+                Scaling__X = Scale[0];
+                Scaling__Y = Scale[1];
+                Scaling__Z = Scale[2];
+
                 Healthbar__X = HealthBarPosition1[0];
                 Healthbar__Y = HealthBarPosition1[1];
                 Healthbar__Z = HealthBarPosition1[2];

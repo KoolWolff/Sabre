@@ -26,23 +26,23 @@
         </Controls:WindowCommands>
     </Controls:MetroWindow.LeftWindowCommands>
     <Grid x:Name="sabre">
-        <Grid x:Name="main" Visibility="Hidden">
+        <Grid x:Name="main">
             <Controls:Tile x:Name="tileSkinCollection" Title="Skin Collection" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Click="openSkinCollection">
-                <Rectangle Width="280" Height="109" Margin="0,-30,0,0">
+                <Rectangle Width="280" Height="90" Margin="0,-30,0,0">
                     <Rectangle.Fill>
                         <VisualBrush Visual="{StaticResource appbar_layer}" Stretch="Uniform"/>
                     </Rectangle.Fill>
                 </Rectangle>
             </Controls:Tile>
             <Controls:Tile x:Name="tileSkinCreation" Title="Skin Creation" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Margin="72,276,922,275" Click="openSkinCreation">
-                <Rectangle Width="280" Height="109" Margin="0,-30,0,0">
+                <Rectangle Width="280" Height="90" Margin="0,-30,0,0">
                     <Rectangle.Fill>
                         <VisualBrush Visual="{StaticResource appbar_page_bold}" Stretch="Uniform"/>
                     </Rectangle.Fill>
                 </Rectangle>
             </Controls:Tile>
             <Controls:Tile x:Name="tileSettings" Title="Settings" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Margin="935,276,59,275" Click="openSettings">
-                <Rectangle Width="280" Height="109" Margin="0,-30,0,0">
+                <Rectangle Width="280" Height="90" Margin="0,-30,0,0">
                     <Rectangle.Fill>
                         <VisualBrush Visual="{StaticResource appbar_settings}" Stretch="Uniform"/>
                     </Rectangle.Fill>
@@ -78,7 +78,7 @@
             </GroupBox>
         </Grid>
         <Grid x:Name="gridSkinCollection" Visibility="Hidden">
-
+            <ListBox x:Name="listSkins" HorizontalAlignment="Left" Height="532" Margin="10,10,0,0" VerticalAlignment="Top" Width="1254"/>
         </Grid>
         <Grid x:Name="gridSkinCreation" Visibility="Hidden">
             <Controls:Tile x:Name="tileWADExtractor" Margin="10,10,1056,473" Height="Auto" Width="Auto" Click="tileWADExtractor_Click">
@@ -126,7 +126,7 @@
                 </Grid>
             </GroupBox>
         </Grid>
-        <Grid x:Name="gridMOBEditor">
+        <Grid x:Name="gridMOBEditor" Visibility="Hidden">
             <DataGrid x:Name="dataMOBEditor" Margin="0,0,0,117" ItemsSource="{Binding Entries}" IsTextSearchEnabled="True"/>
             <TextBox x:Name="textMOBEditorPath" HorizontalAlignment="Left" Height="12" Margin="10,579,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="1229" IsReadOnly="True"/>
             <Button x:Name="btnMOBEditorPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}"
@@ -134,6 +134,8 @@
             <GroupBox x:Name="groupMOBTools" Header="Tools" HorizontalAlignment="Left" Height="71" Margin="10,610,0,0" VerticalAlignment="Top" Width="1254">
                 <Grid Margin="0,0,1050,0">
                     <Button x:Name="btnMOBEditorAddEntry" Content="Add Entry" Click="btnMOBEditorAddEntry_Click"/>
+                    <Button x:Name="btnMOBEditorRemoveEntry" Content="Remove Entries" Margin="197,0,-197,0" Click="btnMOBEditorRemoveEntry_Click"/>
+                    <Button x:Name="btnMOBEditorExtractEntries" Content="Extract Entries" Margin="394,0,-394,0" Click="btnMOBEditorExtractEntries_Click"/>
                     <Button x:Name="btnMOBEditorSave" Content="Save MOB" Margin="1052,0,-1052,0" Click="btnMOBEditorSave_Click"/>
                 </Grid>
             </GroupBox>

@@ -29,7 +29,6 @@ namespace Sabre
         private string ecdsa;
         private WADFile wad;
         private MOBFile mob;
-        private uint MOBEntryNumber = 0;
         public List<string> WADHashes = new List<string>();
         public MainWindow()
         {
@@ -166,9 +165,17 @@ namespace Sabre
 
         private void btnMOBEditorAddEntry_Click(object sender, RoutedEventArgs e)
         {
-            Functions.AddMOBEntry(dataMOBEditor.Items, MOBEntryNumber);
-            dataMOBEditor.ItemsSource = mob.MobObjects;
-            MOBEntryNumber++;
+            Functions.AddMOBEntry(mob.MobObjects);
+        }
+
+        private void btnMOBEditorRemoveEntry_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.RemoveMOBEntry(mob.MobObjects, dataMOBEditor.SelectedItems);
+        }
+
+        private void btnMOBEditorExtractEntries_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.ExtractMOBEntries(dataMOBEditor.SelectedItems);
         }
     }
 }

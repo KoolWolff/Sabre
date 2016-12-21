@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using WPFFolderBrowser;
 using System.IO.Compression;
 using System.Data.HashFunction;
+using System.Collections.ObjectModel;
 
 namespace Sabre
 {
@@ -296,18 +297,59 @@ namespace Sabre
                 }
             }
         }
-        public static void AddMOBEntry(ItemCollection entries, uint entryNumber)
+        public static void AddMOBEntry(ObservableCollection<MOBFile.MOBObject> entries) 
         {
-            BinaryWriter bw = new BinaryWriter(File.OpenWrite("tempentry"));
-            bw.Write(ModifyMOBName("EntryName" + entryNumber).ToCharArray());
-            bw.Write(new byte[68]);
-            bw.Dispose();
-            bw.Close();
-            BinaryReader br = new BinaryReader(File.OpenRead("tempentry"));
-            entries.Add(new MOBFile.MOBObject(br));
-            br.Dispose();
-            br.Close();
-            File.Delete("tempentry");
+            Application.Current.Dispatcher.BeginInvoke(new Action(() => { entries.Add(new MOBFile.MOBObject("Entry name here")); }));
+        }
+        public static void RemoveMOBEntry(ObservableCollection<MOBFile.MOBObject> entries, System.Collections.IList selectedEntries)
+        {
+            foreach(MOBFile.MOBObject se in selectedEntries)
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() => { entries.Remove(se); }));
+            }
+        }
+        public static void ExtractMOBEntries(System.Collections.IList selectedEntries)
+        {
+            string path = SelectFolder("Select the path where you want to export your MOB Entries");
+            foreach (MOBFile.MOBObject o in selectedEntries)
+            {
+                using (BinaryWriter bw = new BinaryWriter(File.OpenWrite(path + "\\" + o.Name + ".mobentry")))
+                {
+                    bw.Write(o.Name.ToCharArray());
+                    if (o.Name.Length != 60)
+                    {
+                        for (int i = o.Name.Length; i < 60; i++)
+                        {
+                            bw.Write((byte)0);
+                        }
+                    }
+                    bw.Write((UInt16)o.ObjectZero1);
+                    bw.Write((byte)o.Flag);
+                    bw.Write((byte)o.ObjectZero2);
+
+                    bw.Write(o.Position__X);
+                    bw.Write(o.Position__Y);
+                    bw.Write(o.Position__Z);
+
+                    bw.Write(o.Rotation__X);
+                    bw.Write(o.Rotation__Y);
+                    bw.Write(o.Rotation__Z);
+
+                    bw.Write(o.Scaling__X);
+                    bw.Write(o.Scaling__Y);
+                    bw.Write(o.Scaling__Z);
+
+                    bw.Write(o.Healthbar__X);
+                    bw.Write(o.Healthbar__Y);
+                    bw.Write(o.Healthbar__Z);
+
+                    bw.Write(o.Healthbar__Bounding__X);
+                    bw.Write(o.Healthbar__Bounding__Y);
+                    bw.Write(o.Healthbar__Bounding__Z);
+
+                    bw.Write((UInt32)o.ObjectZero3);
+                }
+            }
         }
         public static string ModifyMOBName(string name)
         {
