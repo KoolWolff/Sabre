@@ -24,11 +24,12 @@ namespace Sabre
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private Logger log;
         private Config cfg;
+        private Logger log;
         private string ecdsa;
         private WADFile wad;
         private MOBFile mob;
+        private WPKFile wpk;
         public List<string> WADHashes = new List<string>();
         public MainWindow()
         {
@@ -36,10 +37,24 @@ namespace Sabre
             log.Write("LOGGER INITIALIZED", Logger.WriterType.WriteMessage);
             InitializeComponent();
             log.Write("SABRE INITIALIZED", Logger.WriterType.WriteMessage);
-            cfg = new Config("config.ini", log);
-            Functions.LoadSettings(cfg, this);
-            WADHashes = HASH.GetWADHashes(REST.GetCharacters(true), Environment.CurrentDirectory, 15);
-            string tmp = Hash.XXHash("DATA/Characters/Aatrox/Skins/Skin0.bin"); // X2 - F2061FA001024CF7 X - F261FA0124CF7
+            if (File.Exists("config") == false)
+            {
+                var c = File.Create("config");
+                c.Close();
+                Config.Setting.Write(Functions.GetLoLPath(), Config.SettingType.LoLPath);
+                Config.Setting.Write("BaseDark", Config.SettingType.Theme);
+                Config.Setting.Write("Teal", Config.SettingType.Accent);
+                Config.Setting.Write("", Config.SettingType.WADPath);
+                Config.Setting.Write("", Config.SettingType.WADExtractionPath);
+                Config.Setting.Write("", Config.SettingType.MOBPath);
+                Config.Setting.Write("", Config.SettingType.MOBExtractionPath);
+                Config.Setting.Write("", Config.SettingType.MOBImportationPath);
+                Config.Setting.Write("", Config.SettingType.WPKPath);
+                Config.Setting.Write("", Config.SettingType.WPKExtractionPath);
+                Config.Setting.Write("", Config.SettingType.WPKImportationPath);
+            }
+            cfg = new Config("config", log);
+            Functions.LoadSettings(cfg, this, out WADHashes);
         }
         
         private void buttonGit(object sender, RoutedEventArgs e)
@@ -73,15 +88,7 @@ namespace Sabre
         private void openSkinCreation(object sender, RoutedEventArgs e)
         {
             Functions.SwitchGrids(main, gridSkinCreation);
-        }
-        private void buttonHome(object sender, RoutedEventArgs e)
-        {
-            foreach(Grid g in sabre.Children)
-            {
-                g.Visibility = Visibility.Hidden;
-            }
-            main.Visibility = Visibility.Visible;
-        }
+        }  
          
         private void changeAppearance(object sender, SelectionChangedEventArgs e)
         {
@@ -90,8 +97,11 @@ namespace Sabre
                 try
                 {
                     Functions.ChangeAppearance(comboAccents.SelectedItem.ToString(), comboThemes.SelectedItem.ToString());
-                    Config.Write(comboThemes.SelectedItem.ToString(), comboAccents.SelectedItem.ToString(), textLoLPath.Text);
                     log.Write("APPEARANCE CHANGED TO " + comboAccents.SelectedItem.ToString() + " " + comboThemes.SelectedItem.ToString(), Logger.WriterType.WriteMessage);
+                    cfg.Settings.Find(x => x.Type == Config.SettingType.Theme).StringEntry = comboThemes.SelectedItem.ToString();
+                    cfg.Settings.Find(x => x.Type == Config.SettingType.Theme).StringLength = (UInt16)comboThemes.SelectedItem.ToString().Length;
+                    cfg.Settings.Find(x => x.Type == Config.SettingType.Accent).StringEntry = comboAccents.SelectedItem.ToString();
+                    cfg.Settings.Find(x => x.Type == Config.SettingType.Accent).StringLength = (UInt16)comboAccents.SelectedItem.ToString().Length;
                 }
                 catch (Exception) { log.Write("ERROR APPEARANCE TO " + comboAccents.SelectedItem.ToString() + " " + comboThemes.SelectedItem.ToString(), Logger.WriterType.WriteError); }
             }
@@ -100,7 +110,6 @@ namespace Sabre
         private void changeLoLPath(object sender, RoutedEventArgs e)
         {
             textLoLPath.Text = Functions.SelectFolder("Select your League of Legends folder");
-            Config.Write(comboThemes.SelectedItem.ToString(), comboAccents.SelectedItem.ToString(), textLoLPath.Text);
         }
 
         private void tileWADExtractor_Click(object sender, RoutedEventArgs e)
@@ -182,6 +191,131 @@ namespace Sabre
         private void tileWPKEditor_Click(object sender, RoutedEventArgs e)
         {
             Functions.SwitchGrids(gridSkinCreation, gridWPKEditor);
+        }
+
+        private void btnWPKEditorPath_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.Filter = "WPK File (*.wpk)|*.wpk";
+            if (ofd.ShowDialog() == true)
+            {
+                wpk = new WPKFile(ofd.FileName);
+                dataWPKEditor.ItemsSource = wpk.AudioFiles;
+                textWPKEditorPath.Text = ofd.FileName;
+            }
+        }
+
+        private void buttonWPKEditorExtractSelected_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void btnLoLPath_Click(object sender, RoutedEventArgs e)
+        {
+            textLoLPath.Text = Functions.SelectFolder(btnLoLPath.ToolTip.ToString());
+            cfg.Settings.Find(x => x.Type == Config.SettingType.LoLPath).StringEntry = textLoLPath.Text;
+            cfg.Settings.Find(x => x.Type == Config.SettingType.LoLPath).StringLength = (UInt16)textLoLPath.Text.Length;
+        }
+
+        private void btnWADPath_Click(object sender, RoutedEventArgs e)
+        {
+            textWADPath.Text = Functions.SelectFolder(btnWADPath.ToolTip.ToString());
+            cfg.Settings.Find(x => x.Type == Config.SettingType.WADPath).StringEntry = textWADPath.Text;
+            cfg.Settings.Find(x => x.Type == Config.SettingType.WADPath).StringLength = (UInt16)textWADPath.Text.Length;
+        }
+
+        private void btnWADExtractionPath_Click(object sender, RoutedEventArgs e)
+        {
+            textWADExtractionPath.Text = Functions.SelectFolder(btnWADExtractionPath.ToolTip.ToString());
+            cfg.Settings.Find(x => x.Type == Config.SettingType.WADExtractionPath).StringEntry = textWADExtractionPath.Text;
+            cfg.Settings.Find(x => x.Type == Config.SettingType.WADExtractionPath).StringLength = (UInt16)textWADExtractionPath.Text.Length;
+        }
+
+        private void btnMOBPath_Click(object sender, RoutedEventArgs e)
+        {
+            textMOBPath.Text = Functions.SelectFolder(btnMOBPath.ToolTip.ToString());
+            cfg.Settings.Find(x => x.Type == Config.SettingType.MOBPath).StringEntry = textMOBPath.Text;
+            cfg.Settings.Find(x => x.Type == Config.SettingType.MOBPath).StringLength = (UInt16)textMOBPath.Text.Length;
+        }
+
+        private void btnMOBExtractionPath_Click(object sender, RoutedEventArgs e)
+        {
+            textMOBExtractionPath.Text = Functions.SelectFolder(btnMOBExtractionPath.ToolTip.ToString());
+            cfg.Settings.Find(x => x.Type == Config.SettingType.MOBExtractionPath).StringEntry = textMOBExtractionPath.Text;
+            cfg.Settings.Find(x => x.Type == Config.SettingType.MOBExtractionPath).StringLength = (UInt16)textMOBExtractionPath.Text.Length;
+        }
+
+        private void btnMOBImportationPath_Click(object sender, RoutedEventArgs e)
+        {
+            textMOBImportationPath.Text = Functions.SelectFolder(btnMOBImportationPath.ToolTip.ToString());
+            cfg.Settings.Find(x => x.Type == Config.SettingType.MOBImportationPath).StringEntry = textMOBImportationPath.Text;
+            cfg.Settings.Find(x => x.Type == Config.SettingType.MOBImportationPath).StringLength = (UInt16)textMOBImportationPath.Text.Length;
+        }
+
+        private void btnWPKPath_Click(object sender, RoutedEventArgs e)
+        {
+            textWPKPath.Text = Functions.SelectFolder(btnWPKPath.ToolTip.ToString());
+            cfg.Settings.Find(x => x.Type == Config.SettingType.WPKPath).StringEntry = textWPKPath.Text;
+            cfg.Settings.Find(x => x.Type == Config.SettingType.WPKPath).StringLength = (UInt16)textWPKPath.Text.Length;
+        }
+
+        private void btnWPKExtractionPath_Click(object sender, RoutedEventArgs e)
+        {
+            textWPKExtractionPath.Text = Functions.SelectFolder(btnWPKExtractionPath.ToolTip.ToString());
+            cfg.Settings.Find(x => x.Type == Config.SettingType.WPKExtractionPath).StringEntry = textWPKExtractionPath.Text;
+            cfg.Settings.Find(x => x.Type == Config.SettingType.WPKExtractionPath).StringLength = (UInt16)textWPKExtractionPath.Text.Length;
+        }
+
+        private void btnWPKImportationPath_Click(object sender, RoutedEventArgs e)
+        {
+            textWPKImportationPath.Text = Functions.SelectFolder(btnWPKImportationPath.ToolTip.ToString());
+            cfg.Settings.Find(x => x.Type == Config.SettingType.WPKImportationPath).StringEntry = textWPKImportationPath.Text;
+            cfg.Settings.Find(x => x.Type == Config.SettingType.WPKImportationPath).StringLength = (UInt16)textWPKImportationPath.Text.Length;
+        }
+
+        private void buttonHome(object sender, RoutedEventArgs e)
+        {
+            foreach (Grid g in sabre.Children)
+            {
+                g.Visibility = Visibility.Hidden;
+            }
+            main.Visibility = Visibility.Visible;
+            Config.Write(cfg.Settings);
+        }
+
+        private void buttonSettings(object sender, RoutedEventArgs e)
+        {
+            foreach (Grid g in sabre.Children)
+            {
+                g.Visibility = Visibility.Hidden;
+            }
+            gridSettings.Visibility = Visibility.Visible;
+            Config.Write(cfg.Settings);
+        }
+
+        private void buttonSkinCreation(object sender, RoutedEventArgs e)
+        {
+            foreach (Grid g in sabre.Children)
+            {
+                g.Visibility = Visibility.Hidden;
+            }
+            gridSkinCreation.Visibility = Visibility.Visible;
+            Config.Write(cfg.Settings);
+        }
+
+        private void buttonSkinCollection(object sender, RoutedEventArgs e)
+        {
+            foreach (Grid g in sabre.Children)
+            {
+                g.Visibility = Visibility.Hidden;
+            }
+            gridSkinCollection.Visibility = Visibility.Visible;
+            Config.Write(cfg.Settings);
+        }
+
+        private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Config.Write(cfg.Settings);
         }
     }
 }

@@ -9,6 +9,7 @@ using WPFFolderBrowser;
 using System.IO.Compression;
 using System.Data.HashFunction;
 using System.Collections.ObjectModel;
+using SabreAPI;
 
 namespace Sabre
 {
@@ -25,6 +26,20 @@ namespace Sabre
 
             return string.Format("{0:n1} {1}", adjustedSize, SizeSuffixes[mag]);
         }
+        public static string GetLoLPath()
+        {
+            string LoLLocation = "";
+            using (Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("Software\\Wow6432Node\\Riot Games\\League of Legends"))
+            {
+                if (key != null)
+                {
+                    Object o = key.GetValue("Path");
+                    LoLLocation = o.ToString();
+                }
+            }
+            return LoLLocation;
+        }
+
         public static byte[] DecompressZlib(byte[] inData)
         {
             byte[] outData;
@@ -70,6 +85,7 @@ namespace Sabre
             }
             output.Flush();
         }
+
         public static void SwitchGrids(Grid hider, Grid shower)
         {
             hider.Visibility = System.Windows.Visibility.Hidden;
@@ -91,8 +107,14 @@ namespace Sabre
                                         ThemeManager.GetAccent(accent),
                                         ThemeManager.GetAppTheme(theme));
         }
-        public static void LoadSettings(Config cfg, MainWindow mw)
+        public static void LoadSettings(Config cfg, MainWindow mw, out List<string> WADhashes)
         {
+            WADhashes = new List<string>();
+            if(File.Exists("wadchargen") == false)
+            {
+                WADhashes = HASH.GetWADHashes(REST.GetCharacters(true), Environment.CurrentDirectory, 15);
+            }
+            else WADhashes.AddRange(File.ReadAllLines("wadchargen"));
             IEnumerable<Accent> accents = ThemeManager.Accents;
             foreach (Accent a in accents)
             {
@@ -103,8 +125,8 @@ namespace Sabre
             {
                 mw.comboThemes.Items.Add(t.Name);
             }
-            mw.comboAccents.SelectedItem = cfg.Entries.Find(x => x.StartsWith("Accent")).Split(' ')[1];
-            mw.comboThemes.SelectedItem = cfg.Entries.Find(x => x.StartsWith("Theme")).Split(' ')[1];
+            mw.comboAccents.SelectedItem = cfg.Settings.Find(x => x.Type == Config.SettingType.Accent).StringEntry;
+            mw.comboThemes.SelectedItem = cfg.Settings.Find(x => x.Type == Config.SettingType.Theme).StringEntry;
         }
         public static string SelectFolder(string title)
         {
@@ -119,84 +141,7 @@ namespace Sabre
                 return "";
             }
         }
-        public static void ExtractWAD(System.Collections.IList entries, List<string> Hashes)
-        {
-            foreach (WADFile.Entry e in entries)
-            {
-                if (e.Compression == WADFile.CompressionType.String)
-                {
-                    continue;
-                }
-                else
-                {
-                    if (e.Name == null)
-                    {
-                        Directory.CreateDirectory("WAD Extract//Unknown");
-                        if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
-                        {
-                            var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash + ".bin");
-                            f.Dispose();
-                            f.Close();
-                            File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash + ".bin", e.Data);
-                        }
-                        else
-                        {
-                            var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash);
-                            f.Dispose();
-                            f.Close();
-                            File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash, e.Data);
-                        }
-                    }
-                    else
-                    {
-                        Directory.CreateDirectory(Path.GetDirectoryName(e.Name));
-                        var f = File.Create(e.Name);
-                        f.Dispose();
-                        f.Close();
-                    }
-                }
-            }
-            GC.Collect();
-        }
-        public static void ExtractWAD(List<WADFile.Entry> entriesAll, List<string> Hashes)
-        {
-            foreach (var e in entriesAll)
-            {
-                if (e.Compression == WADFile.CompressionType.String)
-                {
-                    continue;
-                }
-                else
-                {
-                    if (e.Name == null)
-                    {
-                        Directory.CreateDirectory("WAD Extract//Unknown");
-                        if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
-                        {
-                            var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash + ".bin");
-                            f.Dispose();
-                            f.Close();
-                            File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash + ".bin", e.Data);
-                        }
-                        else
-                        {
-                            var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash);
-                            f.Dispose();
-                            f.Close();
-                            File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash, e.Data);
-                        }
-                    }
-                    else
-                    {
-                        Directory.CreateDirectory(Path.GetDirectoryName(e.Name));
-                        var f = File.Create(e.Name);
-                        f.Dispose();
-                        f.Close();
-                    }
-                }
-            }
-            GC.Collect();
-        }
+
         public static byte[] StringToByteArray(string str)
         {
             byte[] bytes = new byte[str.Length * sizeof(char)];
@@ -243,6 +188,7 @@ namespace Sabre
             s = s.Replace("\0", string.Empty);
             return s;
         }
+
         public static void SaveMOB(MOBFile mob, System.Collections.IList entries)
         {
             Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
@@ -351,6 +297,89 @@ namespace Sabre
                 }
             }
         }
+        public static void ExtractWPK(string defaultPath, System.Collections.IList selectedEntries)
+        {
+
+        }
+        public static void ExtractWAD(System.Collections.IList entries, List<string> Hashes)
+        {
+            foreach (WADFile.Entry e in entries)
+            {
+                if (e.Compression == WADFile.CompressionType.String)
+                {
+                    continue;
+                }
+                else
+                {
+                    if (e.Name == null)
+                    {
+                        Directory.CreateDirectory("WAD Extract//Unknown");
+                        if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
+                        {
+                            var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash + ".bin");
+                            f.Dispose();
+                            f.Close();
+                            File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash + ".bin", e.Data);
+                        }
+                        else
+                        {
+                            var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash);
+                            f.Dispose();
+                            f.Close();
+                            File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash, e.Data);
+                        }
+                    }
+                    else
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(e.Name));
+                        var f = File.Create(e.Name);
+                        f.Dispose();
+                        f.Close();
+                    }
+                }
+            }
+            GC.Collect();
+        }
+        public static void ExtractWAD(List<WADFile.Entry> entriesAll, List<string> Hashes)
+        {
+            foreach (var e in entriesAll)
+            {
+                if (e.Compression == WADFile.CompressionType.String)
+                {
+                    continue;
+                }
+                else
+                {
+                    if (e.Name == null)
+                    {
+                        Directory.CreateDirectory("WAD Extract//Unknown");
+                        if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
+                        {
+                            var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash + ".bin");
+                            f.Dispose();
+                            f.Close();
+                            File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash + ".bin", e.Data);
+                        }
+                        else
+                        {
+                            var f = File.Create("WAD Extract//Unknown" + "//" + e.XXHash);
+                            f.Dispose();
+                            f.Close();
+                            File.WriteAllBytes("WAD Extract//Unknown" + "//" + e.XXHash, e.Data);
+                        }
+                    }
+                    else
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(e.Name));
+                        var f = File.Create(e.Name);
+                        f.Dispose();
+                        f.Close();
+                    }
+                }
+            }
+            GC.Collect();
+        }
+
         public static string ModifyMOBName(string name)
         {
             for(int i = name.Length; i < 60; i++)
@@ -359,6 +388,19 @@ namespace Sabre
             }
             return name;
         }
+        public static string GetWPKName(char[] tempName)
+        {
+            string name = "";
+            foreach (char c in tempName)
+            {
+                if (c != '\0')
+                {
+                    name += c;
+                }
+            }
+            return name;
+        }
+
         public enum StringCaseType
         {
             Uppercase,

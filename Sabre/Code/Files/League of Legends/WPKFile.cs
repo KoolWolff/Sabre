@@ -13,31 +13,29 @@ namespace Sabre
         public BinaryReader br;
         public Header header;
         public ObservableCollection<AudioFile> AudioFiles = new ObservableCollection<AudioFile>();
+        public uint LastOffset = 0;
         public WPKFile(string fileLocation)
         {
             br = new BinaryReader(File.Open(fileLocation, FileMode.Open));
             header = new Header(br);
-            for(int i = 0; i < header.AudioCount; i++)
+            for (int i = 0; i < header.AudioCount; i++)
             {
                 AudioFiles.Add(new AudioFile(br.ReadUInt32()));
             }
-            UInt32 zero = br.ReadUInt32();
-            if(zero != 0)
+            LastOffset = AudioFiles[0].DataOffset;
+            foreach (var a in AudioFiles)
             {
-                br.BaseStream.Position -= 4;
-            }
-            foreach(var a in AudioFiles)
-            {
+                br.BaseStream.Seek(a.mtOff, SeekOrigin.Begin);
                 a.DataOffset = br.ReadUInt32();
                 a.DataSize = br.ReadUInt32();
                 a.NameLength = br.ReadUInt32();
-                a.Name = GetWPKName(br.ReadChars((int)a.NameLength * 2));
-                br.ReadUInt16();
-                UInt16 zero1 = br.ReadUInt16();
-                if(zero1 != 0)
-                {
-                    br.BaseStream.Position -= 2;
-                }
+                a.tempName = br.ReadChars((int)a.NameLength * 2);
+                a.Name = Functions.GetWPKName(a.tempName);
+            }
+            foreach (var a in AudioFiles)
+            {
+                br.BaseStream.Seek(a.DataOffset, SeekOrigin.Begin);
+                a.Data = br.ReadBytes((int)a.DataSize);
             }
             br.Dispose();
             br.Close();
@@ -56,36 +54,17 @@ namespace Sabre
         }
         public class AudioFile
         {
+            public UInt32 mtOff;
             public UInt32 DataOffset;
             public UInt32 DataSize;
             public UInt32 NameLength;
-            public string Name;
+            public char[] tempName;
+            public string Name {get; set; }
+            public byte[] Data;
             public AudioFile(UInt32 metaOffset)
             {
-
+                mtOff = metaOffset;
             }
-            public static void ExtractFile(string fileLocation, string extractPath, UInt32 DataOffset, UInt32 DataSize)
-            {
-                using (BinaryReader br = new BinaryReader(new FileStream(fileLocation, FileMode.Open)))
-                { 
-                    br.BaseStream.Seek(DataOffset, SeekOrigin.Begin);
-                    File.WriteAllBytes(extractPath, br.ReadBytes((int)DataSize));
-                    br.Dispose();
-                    br.Close();
-                }
-            }
-        }
-        public static string GetWPKName(char[] tempName)
-        {
-            string name = "";
-            foreach(char c in tempName)
-            {
-                if(c != '\0')
-                {
-                    name += c;
-                }
-            }
-            return name;
         }
     }
 }

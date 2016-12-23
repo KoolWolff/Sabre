@@ -7,7 +7,7 @@
                       Height="720"
                       Width="1280" ResizeMode="NoResize"
                       GlowBrush="{DynamicResource AccentColorBrush}" 
-                      KeyDown="MetroWindow_KeyDown">
+                      KeyDown="MetroWindow_KeyDown" Closing="MetroWindow_Closing">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Content="{iconPacks:PackIconOcticons MarkGithub, Width=20, Height=20}"
@@ -22,11 +22,18 @@
         <Controls:WindowCommands>
             <Button Content="{iconPacks:PackIconOcticons Home, Width=20, Height=20}"
                     Click="buttonHome"
-                    ToolTip="Returns the view to the Main view"/>
+                    ToolTip="Brings the view to the Main Window"/>
+            <Button Content="{iconPacks:PackIconOcticons FileBinary, Width=20, Height=20}"
+                    ToolTip="Brings the view to Skin Creation" Click="buttonSkinCreation" />
+            <Button Content="{iconPacks:PackIconOcticons ListUnordered, Width=20, Height=20}"
+                    ToolTip="Brings the view to Skin Collection" Click="buttonSkinCollection" />
+            <Button Content="{iconPacks:PackIconOcticons Gear, Width=20, Height=20}"
+                    ToolTip="Brings the view to the Settings" 
+                    Click="buttonSettings"/>
         </Controls:WindowCommands>
     </Controls:MetroWindow.LeftWindowCommands>
     <Grid x:Name="sabre">
-        <Grid x:Name="main" Visibility="Hidden">
+        <Grid x:Name="main">
             <Controls:Tile x:Name="tileSkinCollection" Title="Skin Collection" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Click="openSkinCollection">
                 <Rectangle Width="280" Height="90" Margin="0,-30,0,0">
                     <Rectangle.Fill>
@@ -50,7 +57,7 @@
             </Controls:Tile>
         </Grid>
         <Grid x:Name="gridSettings" Visibility="Hidden">
-            <GroupBox x:Name="groupAppearance" Header="Appearance" HorizontalAlignment="Left" Height="121" Margin="10,10,0,0" VerticalAlignment="Top" Width="268">
+            <GroupBox x:Name="groupAppearance" Header="Appearance" HorizontalAlignment="Left" Height="121" Margin="10,10,0,0" VerticalAlignment="Top" Width="253">
                 <Grid>
                     <Label x:Name="labelTheme" Content="Theme" HorizontalAlignment="Left" Height="24" Margin="10,10,0,0" VerticalAlignment="Top" Width="47" Background="{x:Null}"/>
                     <ComboBox x:Name="comboThemes" HorizontalAlignment="Left" Height="13" Margin="57,10,0,0" VerticalAlignment="Top" Width="142" SelectionChanged="changeAppearance"/>
@@ -59,19 +66,58 @@
 
                 </Grid>
             </GroupBox>
-            <GroupBox x:Name="groupPaths" Header="Paths" HorizontalAlignment="Left" Height="293" Margin="283,10,0,0" VerticalAlignment="Top" Width="981">
+            <GroupBox x:Name="groupPaths" Header="Paths" HorizontalAlignment="Left" Height="293" Margin="268,10,0,0" VerticalAlignment="Top" Width="996">
                 <Grid>
-                    <Label x:Name="labelLoLPath" Content="League of Legends" HorizontalAlignment="Left" Height="26" Margin="10,10,0,0" VerticalAlignment="Top" Width="110" Background="#00000000"/>
-                    <TextBox x:Name="textLoLPath" HorizontalAlignment="Left" Height="14" Margin="124,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="809" IsReadOnly="True"/>
-                    <Button x:Name="btnLoLPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}"
-                    ToolTip="Choose your League of Legends path" Margin="937,11,10,217"/>
-                    <Label x:Name="labelWADOpenPath" Content="WAD Path" HorizontalAlignment="Left" Height="26" Margin="10,41,0,0" VerticalAlignment="Top" Width="110" Background="#00000000"/>
-                    <TextBox x:Name="textWADPath" HorizontalAlignment="Left" Height="14" Margin="124,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="809" IsReadOnly="True"/>
-                    <Button x:Name="btnWADPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Height=13, Width=12}"
-                        ToolTip="Choose the path for WAD Files" Margin="937,42,10,186"/>
+                    <ListBox>
+                        <StackPanel Orientation="Horizontal" Height="25" Width="959" HorizontalAlignment="Left">
+                            <Label x:Name="labelLoLPath" Content="League of Legends" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="110" Background="#00000000"/>
+                            <TextBox x:Name="textLoLPath" TextWrapping="Wrap" IsReadOnly="True" Width="820" Margin="0,0,0,-1"/>
+                            <Button x:Name="btnLoLPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}" ToolTip="Choose your League of Legends path" Margin="5,0,0,0" Height="25" VerticalAlignment="Top" Click="btnLoLPath_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Height="25" Width="959" HorizontalAlignment="Left">
+                            <Label x:Name="labelWADPath" Content="WAD Path" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="110" Background="#00000000"/>
+                            <TextBox x:Name="textWADPath" Height="25" TextWrapping="Wrap" IsReadOnly="True" Width="820" Margin="0,0,0,-1"/>
+                            <Button x:Name="btnWADPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}" ToolTip="Choose your WAD Files path" Margin="5,0,0,0" Click="btnWADPath_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Height="25" Width="959" HorizontalAlignment="Left">
+                            <Label x:Name="labelWADExtractionPath" Content="WAD Extraction" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="110" Background="#00000000"/>
+                            <TextBox x:Name="textWADExtractionPath" Height="25" TextWrapping="Wrap" IsReadOnly="True" Width="820" Margin="0,0,0,-1"/>
+                            <Button x:Name="btnWADExtractionPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}" ToolTip="Choose your WAD Extraction path" Margin="5,0,0,0" Click="btnWADExtractionPath_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Height="25" Width="959" HorizontalAlignment="Left">
+                            <Label x:Name="labelMOBPath" Content="MOB Path" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="110" Background="#00000000"/>
+                            <TextBox x:Name="textMOBPath" Height="25" TextWrapping="Wrap" IsReadOnly="True" Width="820" Margin="0,0,0,-1"/>
+                            <Button x:Name="btnMOBPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}" ToolTip="Choose your MOB path" Margin="5,0,0,0" Click="btnMOBPath_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Height="25" Width="959" HorizontalAlignment="Left">
+                            <Label x:Name="labelMOBExtractionPath" Content="MOB Extraction" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="110" Background="#00000000"/>
+                            <TextBox x:Name="textMOBExtractionPath" Height="25" TextWrapping="Wrap" IsReadOnly="True" Width="820" Margin="0,0,0,-1"/>
+                            <Button x:Name="btnMOBExtractionPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}" ToolTip="Choose your MOB Extraction path" Margin="5,0,0,0" Click="btnMOBExtractionPath_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Height="25" Width="959" HorizontalAlignment="Left">
+                            <Label x:Name="labelMOBImportationPath" Content="MOB Importation" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="110" Background="#00000000"/>
+                            <TextBox x:Name="textMOBImportationPath" Height="25" TextWrapping="Wrap" IsReadOnly="True" Width="820" Margin="0,0,0,-1"/>
+                            <Button x:Name="btnMOBImportationPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}" ToolTip="Choose your MOB Importation path" Margin="5,0,0,0" Click="btnMOBImportationPath_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Height="25" Width="959" HorizontalAlignment="Left">
+                            <Label x:Name="labelWPKPath" Content="WPK Path" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="110" Background="#00000000"/>
+                            <TextBox x:Name="textWPKPath" Height="25" TextWrapping="Wrap" IsReadOnly="True" Width="820" Margin="0,0,0,-1"/>
+                            <Button x:Name="btnWPKPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}" ToolTip="Choose your WPK path" Margin="5,0,0,0" Click="btnWPKPath_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Height="25" Width="959" HorizontalAlignment="Left">
+                            <Label x:Name="labelWPKExtractionPath" Content="WPK Extraction" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="110" Background="#00000000"/>
+                            <TextBox x:Name="textWPKExtractionPath" Height="25" TextWrapping="Wrap" IsReadOnly="True" Width="820" Margin="0,0,0,-1"/>
+                            <Button x:Name="btnWPKExtractionPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}" ToolTip="Choose your WPK Extraction path" Margin="5,0,0,0" Click="btnWPKExtractionPath_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Height="25" Width="959" HorizontalAlignment="Left">
+                            <Label x:Name="labelWPKImportationPath" Content="WPK Importation" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top" Width="110" Background="#00000000"/>
+                            <TextBox x:Name="textWPKImportationPath" Height="25" TextWrapping="Wrap" IsReadOnly="True" Width="820" Margin="0,0,0,-1"/>
+                            <Button x:Name="btnWPKImportationPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}" ToolTip="Choose your WPK Importation path" Margin="5,0,0,0" Click="btnWPKImportationPath_Click"/>
+                        </StackPanel>
+                    </ListBox>
                 </Grid>
             </GroupBox>
-            <GroupBox x:Name="groupEnums" Header="Booleans" HorizontalAlignment="Left" Height="293" Margin="283,308,0,0" VerticalAlignment="Top" Width="981">
+            <GroupBox x:Name="groupEnums" Header="Booleans" HorizontalAlignment="Left" Height="293" Margin="268,308,0,0" VerticalAlignment="Top" Width="996">
                 <Grid>
 
                 </Grid>
@@ -80,7 +126,7 @@
         <Grid x:Name="gridSkinCollection" Visibility="Hidden">
             <ListBox x:Name="listSkins" HorizontalAlignment="Left" Height="532" Margin="10,10,0,0" VerticalAlignment="Top" Width="1254"/>
         </Grid>
-        <Grid x:Name="gridSkinCreation">
+        <Grid x:Name="gridSkinCreation" Visibility="Hidden">
             <Controls:Tile x:Name="tileWADExtractor" Margin="10,10,1056,473" Height="Auto" Width="Auto" Click="tileWADExtractor_Click">
                 <Grid Height="198">
                     <Rectangle Width="198" Height="161" Margin="0,0,0,25">
@@ -153,8 +199,18 @@
             </GroupBox>
 
         </Grid>
-        <Grid x:Name="gridWPKEditor">
-            
+        <Grid x:Name="gridWPKEditor" Visibility="Hidden">
+            <DataGrid x:Name="dataWPKEditor" Margin="0,0,0,117" ItemsSource="{Binding Entries}" IsTextSearchEnabled="True"/>
+            <TextBox x:Name="textWPKEditorPath" HorizontalAlignment="Left" Height="12" Margin="10,579,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="1229" IsReadOnly="True"/>
+            <Button x:Name="btnWPKEditorPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}"
+                    ToolTip="Select the path for your WPK file" Margin="1244,579,10,86" Width="20" Click="btnWPKEditorPath_Click"/>
+            <GroupBox x:Name="groupWPKEditorTools" Header="Tools" HorizontalAlignment="Left" Height="71" Margin="10,610,0,0" VerticalAlignment="Top" Width="1254">
+                <Grid Margin="0,0,1062,0">
+                    <Button x:Name="buttonWPKEditorExtractSelected" Content="Extract Selected" Click="buttonWPKEditorExtractSelected_Click"/>
+                    <Button x:Name="buttonWPKEditorReplaceSelected" Content="Replace Selected (one)" Margin="185,0,-185,0"/>
+                    <Button x:Name="buttonWPKEditorReplaceSelectedMultiple" Content="Replace Selected (Multiple)" Margin="370,0,-370,0"/>
+                </Grid>
+            </GroupBox>
         </Grid>
     </Grid>
 </Controls:MetroWindow>
