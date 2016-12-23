@@ -207,7 +207,12 @@ namespace Sabre
 
         private void buttonWPKEditorExtractSelected_Click(object sender, RoutedEventArgs e)
         {
-            
+            string dir = Functions.SelectFolder("Select the folder where you want to export your files", cfg.Settings.Find(x => x.Type == Config.SettingType.WPKExtractionPath).StringEntry);
+            foreach(WPKFile.AudioFile a in dataWPKEditor.SelectedItems)
+            {
+                Directory.CreateDirectory(dir + "\\" + System.IO.Path.GetFileNameWithoutExtension(wpk.fileLoc) + "\\");
+                File.WriteAllBytes(dir + "\\" + System.IO.Path.GetFileNameWithoutExtension(wpk.fileLoc) + "\\" + a.Name, a.Data);
+            }
         }
 
         private void btnLoLPath_Click(object sender, RoutedEventArgs e)

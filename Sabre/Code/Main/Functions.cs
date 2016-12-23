@@ -141,6 +141,20 @@ namespace Sabre
                 return "";
             }
         }
+        public static string SelectFolder(string title, string startupDir)
+        {
+            WPFFolderBrowserDialog fbd = new WPFFolderBrowserDialog();
+            fbd.InitialDirectory = startupDir;
+            fbd.Title = title;
+            if (fbd.ShowDialog() == true)
+            {
+                return fbd.FileName;
+            }
+            else
+            {
+                return "";
+            }
+        }
 
         public static byte[] StringToByteArray(string str)
         {

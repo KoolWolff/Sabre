@@ -10,12 +10,14 @@ namespace Sabre
 {
     class WPKFile
     {
+        public string fileLoc;
         public BinaryReader br;
         public Header header;
         public ObservableCollection<AudioFile> AudioFiles = new ObservableCollection<AudioFile>();
         public uint LastOffset = 0;
         public WPKFile(string fileLocation)
         {
+            fileLoc = fileLocation;
             br = new BinaryReader(File.Open(fileLocation, FileMode.Open));
             header = new Header(br);
             for (int i = 0; i < header.AudioCount; i++)
