@@ -52,6 +52,8 @@ namespace Sabre
                 {
                     d.SubDirectoryList.Add(Directories[i + (int)d.SubDirectoryStartIndex]);
                 }
+                GetDirParent(Directories, d);
+                GetFullPathDir(Directories, d);
             }
         }
 
@@ -121,6 +123,35 @@ namespace Sabre
                 SubDirectoryCount = br.ReadUInt32();
                 FileListStartIndex = br.ReadUInt32();
                 FileCount = br.ReadUInt32();
+            }
+        }
+        public static void GetDirParent(List<RMDirectory> dirs, RMDirectory dir)
+        {
+            if(dir.Name == "") { }
+            else
+            {
+                foreach(RMDirectory rmd in dirs)
+                {
+                    if(rmd.SubDirectoryList.Contains(dir)) dir.Parent = rmd;
+                }
+            }
+        }
+        public static void GetFullPathDir(List<RMDirectory> dirs, RMDirectory dir)
+        {
+            if (dir.Name == "") { }
+            else
+            {
+                foreach (RMDirectory rmd in dirs)
+                {
+                    if (rmd.SubDirectoryList.Contains(dir))
+                    {
+                        dir.DirectoryFullPath += rmd.Name + "\\";
+                        foreach (RMDirectory subs in rmd.SubDirectoryList)
+                        {
+                            dir.DirectoryFullPath += subs.Name + "\\";
+                        }
+                    }
+                }
             }
         }
     }

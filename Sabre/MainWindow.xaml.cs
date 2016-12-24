@@ -55,6 +55,7 @@ namespace Sabre
             }
             cfg = new Config("config", log);
             Functions.LoadSettings(cfg, this, out WADHashes);
+            ReleaseManifestFile relman = new ReleaseManifestFile("0.0.1.96.bkp.rlsm");
         }
         
         private void buttonGit(object sender, RoutedEventArgs e)
@@ -120,7 +121,8 @@ namespace Sabre
         private void btnWADExtractorPath_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-            if(ofd.ShowDialog() == true)
+            ofd.InitialDirectory = cfg.Settings.Find(x => x.Type == Config.SettingType.WADPath).StringEntry;
+            if (ofd.ShowDialog() == true)
             {
                 wad = new WADFile(ofd.FileName, log, WADHashes);
                 ecdsa = "";
@@ -160,6 +162,7 @@ namespace Sabre
         {
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
             ofd.Filter = "MOB File (*.mob)|*.mob";
+            ofd.InitialDirectory = cfg.Settings.Find(x => x.Type == Config.SettingType.MOBPath).StringEntry;
             if (ofd.ShowDialog() == true)
             {
                 mob = new MOBFile(ofd.FileName);
@@ -196,6 +199,7 @@ namespace Sabre
         private void btnWPKEditorPath_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.InitialDirectory = cfg.Settings.Find(x => x.Type == Config.SettingType.WPKPath).StringEntry;
             ofd.Filter = "WPK File (*.wpk)|*.wpk";
             if (ofd.ShowDialog() == true)
             {

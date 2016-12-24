@@ -210,7 +210,7 @@ namespace Sabre
             sfd.Filter = "MOB File | *.mob";
             sfd.DefaultExt = "mob";
 
-            if(sfd.ShowDialog() == true)
+            if (sfd.ShowDialog() == true)
             {
                 using (BinaryWriter bw = new BinaryWriter(File.OpenWrite(sfd.FileName)))
                 {
