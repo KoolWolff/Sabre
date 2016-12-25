@@ -18,13 +18,14 @@ namespace Sabre
         private static readonly string[] SizeSuffixes = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
         public static string SizeSuffix(Int64 value)
         {
-            if (value < 0) { return "-" + SizeSuffix(-value); }
-            if (value == 0) { return "0.0 bytes"; }
+            double len = value;
+            int order = 0;
+            while (len >= 1024 && ++order < SizeSuffixes.Length)
+            {
+                len = len / 1024;
+            }
 
-            int mag = (int)Math.Log(value, 1024);
-            decimal adjustedSize = (decimal)value / (1L << (mag * 10));
-
-            return string.Format("{0:n1} {1}", adjustedSize, SizeSuffixes[mag]);
+            return String.Format("{0:0.##} {1}", len, SizeSuffixes[order]);
         }
         public static string GetLoLPath()
         {
@@ -84,6 +85,27 @@ namespace Sabre
                 output.Write(buffer, 0, len);
             }
             output.Flush();
+        }
+        public static Quaternion Decompress48BitQuaternion(int AxisFlg, short s2f, short s1f, short s0f)
+        {
+            float s0 = (float)1.41421 * (s0f - 0x3FFF) / 0x7FFF;
+            float s1 = (float)1.41421 * (s1f - 0x3FFF) / 0x7FFF;
+            float s2 = (float)1.41421 * (s2f - 0x3FFF) / 0x7FFF;
+            float s3 = 1.0f - (float)(Math.Pow(s0, 2.0f) + Math.Pow(s1, 2.0f) + Math.Pow(s2, 2.0f));
+
+            switch (AxisFlg)
+            {
+                case 0:
+                    return new Quaternion(s3, s2, s1, s0);
+                case 1:
+                    return new Quaternion(s2, s3, s1, s0);
+                case 2:
+                    return new Quaternion(s2, s1, s3, s0);
+                case 3:
+                    return new Quaternion(s2, s1, s0, s3);
+                default:
+                    return new Quaternion(0, 0, 0, 0);
+            }
         }
 
         public static void SwitchGrids(Grid hider, Grid shower)

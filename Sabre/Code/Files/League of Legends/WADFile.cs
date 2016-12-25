@@ -31,7 +31,7 @@ namespace Sabre
                     e.Name = Hashes.Find(x => Hash.XXHash(x) == e.XXHash);
                     if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
                     {
-                        e.Compression = CompressionType.BIN;
+                        e.FileType = FileType.BIN;
                     }
                 }
                 else if(e.Compression == CompressionType.String)
@@ -40,11 +40,11 @@ namespace Sabre
                     e.Name = Encoding.ASCII.GetString(br.ReadBytes((int)br.ReadUInt32()));
                     if(e.Name.Contains("events.bnk"))
                     {
-                        e.Compression = CompressionType.StringEventBank;
+                        e.FileType = FileType.StringEventBank;
                     }
                     else if(e.Name.Contains("audio.bnk"))
                     {
-                        e.Compression = CompressionType.StringAudioBank;
+                        e.FileType = FileType.StringAudioBank;
                     }
                 }
                 else if(e.Compression == CompressionType.Uncompressed)
@@ -87,7 +87,7 @@ namespace Sabre
         }
         public class Entry
         {
-            public string FileSize { get; set; }
+            public string Size { get; set; }
             public string Name { get; set; }
             public byte[] Data;
             public string XXHash { get; set; }
@@ -95,6 +95,7 @@ namespace Sabre
             public UInt32 CompressedSize;
             public UInt32 UncompressedSize;
             public CompressionType Compression { get; set; }
+            public FileType FileType { get; set; }
             public UInt64 SHA256;
             public Entry(BinaryReader br)
             {
@@ -104,7 +105,7 @@ namespace Sabre
                 UncompressedSize = br.ReadUInt32();
                 Compression = (CompressionType)br.ReadUInt32();
                 SHA256 = br.ReadUInt64();
-                FileSize = Functions.SizeSuffix(UncompressedSize);
+                Size = Functions.SizeSuffix(UncompressedSize);
             }
         }
         public enum CompressionType : UInt32
@@ -112,6 +113,10 @@ namespace Sabre
             Uncompressed = 0,
             Compressed = 1,
             String = 2,
+            Unknown
+        }
+        public enum FileType
+        {
             BIN,
             StringAudioBank,
             StringEventBank,

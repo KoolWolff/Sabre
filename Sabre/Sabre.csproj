@@ -95,6 +95,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Code\Main\Quaternion.cs" />
     <Compile Include="SkinInstallationWindow.xaml.cs">
       <DependentUpon>SkinInstallationWindow.xaml</DependentUpon>
     </Compile>
