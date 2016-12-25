@@ -36,6 +36,7 @@ namespace Sabre
                         {
                             BINFile.Header bh = new BINFile.Header(new MemoryStream(e.Data));
                             if (bh.AssociatedBIN.Count == 2) e.Name = bh.AssociatedBIN[1].Name;
+                            e.IsBINGenerated = true;
                         }
                     }
                 }
@@ -92,6 +93,7 @@ namespace Sabre
         }
         public class Entry
         {
+            public bool IsBINGenerated = false;
             public string Size { get; set; }
             public string Name { get; set; }
             public byte[] Data;
