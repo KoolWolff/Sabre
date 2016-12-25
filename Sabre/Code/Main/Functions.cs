@@ -355,10 +355,11 @@ namespace Sabre
                     }
                     else
                     {
-                        Directory.CreateDirectory(Path.GetDirectoryName(e.Name));
-                        var f = File.Create(e.Name);
+                        Directory.CreateDirectory("WAD Extract//" + Path.GetDirectoryName(e.Name));
+                        var f = File.Create("WAD Extract//" + Path.GetDirectoryName(e.Name) + "\\" + Path.GetFileNameWithoutExtension(e.Name) + "_" + e.XXHash + Path.GetExtension(e.Name));
                         f.Dispose();
                         f.Close();
+                        File.WriteAllBytes("WAD Extract//" + Path.GetDirectoryName(e.Name) + "\\" +  Path.GetFileNameWithoutExtension(e.Name) + "_" + e.XXHash + Path.GetExtension(e.Name), e.Data);
                     }
                 }
             }
