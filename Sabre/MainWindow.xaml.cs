@@ -14,8 +14,10 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using MahApps.Metro;
+using MahApps.Metro.SimpleChildWindow;
 using System.IO;
 using SabreAPI;
+using static MahApps.Metro.SimpleChildWindow.ChildWindowManager;
 
 namespace Sabre
 {
@@ -147,9 +149,9 @@ namespace Sabre
 
         private void MetroWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if(gridWADExtractor.Visibility == Visibility.Visible && e.Key == Key.E)
+            if (gridWADExtractor.Visibility == Visibility.Visible && e.Key == Key.E)
             {
-                MessageBox.Show(ecdsa);
+                MessageBox.Show(ecdsa); 
             }
         }
 
@@ -325,6 +327,54 @@ namespace Sabre
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Config.Write(cfg.Settings);
+        }
+
+        private void gridMOBEditor_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] dataPath = e.Data.GetData(DataFormats.FileDrop, false) as string[];
+                try
+                {
+                    mob = new MOBFile(dataPath[0]);
+                    dataMOBEditor.ItemsSource = mob.MobObjects;
+                    textMOBEditorPath.Text = dataPath[0];
+                }
+                catch(Exception)
+                {
+                    if (wad != null)
+                    {
+                        if (mob.Magic != "OPAM")
+                            log.Write("MOB::IO | FILE WAS NOT THE CORRECT FORMAT", Logger.WriterType.WriteError);
+                        else
+                            log.Write("MOB::IO | ERROR READING FILE", Logger.WriterType.WriteError); 
+                    }
+                }
+            }
+        }
+
+        private void gridWPKEditor_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] dataPath = e.Data.GetData(DataFormats.FileDrop, false) as string[];
+                try
+                {
+                    wpk = new WPKFile(dataPath[0]);
+                    dataWPKEditor.ItemsSource = wpk.AudioFiles;
+                    textWPKEditorPath.Text = dataPath[0];
+                }
+                catch (Exception)
+                {
+                    if (wpk != null)
+                    {
+                        if (wpk.header.Magic != "r3d2")
+                            log.Write("WPK::IO | FILE WAS NOT THE CORRECT FORMAT", Logger.WriterType.WriteError);
+                        else
+                            log.Write("WPK::IO | ERROR READING FILE", Logger.WriterType.WriteError); 
+                    }
+                }
+            }
         }
     }
 }

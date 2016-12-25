@@ -12,7 +12,7 @@ namespace Sabre
         {
             if(type == EasterEggType.Doggo)
             {
-
+                
             }
         }
         public enum EasterEggType

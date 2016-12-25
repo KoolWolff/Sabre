@@ -55,7 +55,7 @@ namespace Sabre
                 GetDirParent(Directories, d);
                 GetFullPathDir(Directories, d);
             }
-        }
+         }
 
         public class Header
         {
@@ -124,6 +124,16 @@ namespace Sabre
                 FileListStartIndex = br.ReadUInt32();
                 FileCount = br.ReadUInt32();
             }
+            public void GetPath()
+            {
+                DirectoryFullPath += Name + "\\";
+                foreach (RMDirectory rmd in SubDirectoryList)
+                {
+                    rmd.DirectoryFullPath += Name + "\\";
+                    while (rmd.Parent != null)
+                        rmd.DirectoryFullPath += rmd.Parent.Name + "\\";
+                }
+            } 
         }
         public static void GetDirParent(List<RMDirectory> dirs, RMDirectory dir)
         {
@@ -138,7 +148,12 @@ namespace Sabre
         }
         public static void GetFullPathDir(List<RMDirectory> dirs, RMDirectory dir)
         {
-            
+            if (dir.Parent == null) dir.DirectoryFullPath += "\\";
+            else
+            {
+                dir.DirectoryFullPath += dir.Parent.Name + "\\";
+            }
+
         }
     }
 }

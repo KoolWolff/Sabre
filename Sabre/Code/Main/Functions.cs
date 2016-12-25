@@ -3,10 +3,9 @@ using System;
 using System.Windows;
 using System.IO;
 using System.Windows.Controls;
-using zlib;
+using Ionic.Zlib;
 using System.Collections.Generic;
 using WPFFolderBrowser;
-using System.IO.Compression;
 using System.Data.HashFunction;
 using System.Collections.ObjectModel;
 using SabreAPI;
@@ -41,22 +40,17 @@ namespace Sabre
             return LoLLocation;
         }
 
+        public static byte[] DecompressDeflate(byte[] data)
+        {
+            return Ionic.Zlib.DeflateStream.UncompressBuffer(data);
+        }
         public static byte[] DecompressZlib(byte[] inData)
         {
-            byte[] outData;
-            using (MemoryStream outMemoryStream = new MemoryStream())
-            using (ZOutputStream outZStream = new ZOutputStream(outMemoryStream))
-            using (Stream inMemoryStream = new MemoryStream(inData))
-            {
-                CopyZlibStream(inMemoryStream, outZStream);
-                outZStream.finish();
-                outData = outMemoryStream.ToArray();
-            }
-            return outData;
+            return ZlibStream.UncompressBuffer(inData);
         }
         public static byte[] DecompressGZip(byte[] gzip)
         {
-            using (GZipStream stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
+            using (System.IO.Compression.GZipStream stream = new System.IO.Compression.GZipStream(new MemoryStream(gzip), System.IO.Compression.CompressionMode.Decompress))
             {
                 const int size = 4096;
                 byte[] buffer = new byte[size];
@@ -76,15 +70,9 @@ namespace Sabre
                 }
             }
         }
-        public static void CopyZlibStream(Stream input, Stream output)
+        public static byte[] DecompressGZipNew(byte[] gzip)
         {
-            byte[] buffer = new byte[2000];
-            int len;
-            while ((len = input.Read(buffer, 0, 2000)) > 0)
-            {
-                output.Write(buffer, 0, len);
-            }
-            output.Flush();
+            return Ionic.Zlib.GZipStream.UncompressBuffer(gzip);
         }
         public static Quaternion Decompress48BitQuaternion(int AxisFlg, short s2f, short s1f, short s0f)
         {
@@ -925,11 +913,11 @@ namespace Sabre
         public static string XXHash(string toHash)
         {
             string hash = "";
-            xxHash xx = new xxHash();
-            byte[] temp = xx.ComputeHash(toHash, 128);
+            xxHash xx = new xxHash(640);
+            byte[] temp = xx.ComputeHash(toHash, 64);
             foreach (byte b in temp)
             {
-                hash += b.ToString("X");
+                hash += b.ToString("X2");
             }
             return hash;
         }

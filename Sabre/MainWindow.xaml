@@ -34,21 +34,21 @@
     </Controls:MetroWindow.LeftWindowCommands>
     <Grid x:Name="sabre">
         <Grid x:Name="main">
-            <Controls:Tile x:Name="tileSkinCollection" Title="Skin Collection" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Click="openSkinCollection">
+            <Controls:Tile x:Name="tileSkinCollection" Title="Skin Collection" ToolTip="Acces your collection of skins" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Click="openSkinCollection" Margin="10,10,984,541">
                 <Rectangle Width="280" Height="90" Margin="0,-30,0,0">
                     <Rectangle.Fill>
                         <VisualBrush Visual="{StaticResource appbar_layer}" Stretch="Uniform"/>
                     </Rectangle.Fill>
                 </Rectangle>
             </Controls:Tile>
-            <Controls:Tile x:Name="tileSkinCreation" Title="Skin Creation" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Margin="72,276,922,275" Click="openSkinCreation">
+            <Controls:Tile x:Name="tileSkinCreation" Title="Skin Creation" ToolTip="Create your own skins" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Margin="10,160,984,391" Click="openSkinCreation">
                 <Rectangle Width="280" Height="90" Margin="0,-30,0,0">
                     <Rectangle.Fill>
                         <VisualBrush Visual="{StaticResource appbar_page_bold}" Stretch="Uniform"/>
                     </Rectangle.Fill>
                 </Rectangle>
             </Controls:Tile>
-            <Controls:Tile x:Name="tileSettings" Title="Settings" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Margin="935,276,59,275" Click="openSettings">
+            <Controls:Tile x:Name="tileSettings" Title="Settings" ToolTip="Change the settings of Sabre to your likings" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Margin="10,311,984,240" Click="openSettings">
                 <Rectangle Width="280" Height="90" Margin="0,-30,0,0">
                     <Rectangle.Fill>
                         <VisualBrush Visual="{StaticResource appbar_settings}" Stretch="Uniform"/>
@@ -165,7 +165,7 @@
             </Controls:Tile>
         </Grid>
         <Grid x:Name="gridWADExtractor" Visibility="Hidden">
-            <DataGrid x:Name="dataWADExtractor" Margin="0,0,0,117" ItemsSource="{Binding Entries}">
+            <DataGrid x:Name="dataWADExtractor" Margin="0,0,0,117" ItemsSource="{Binding Entries}" AllowDrop="True">
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn ElementStyle="{DynamicResource MetroDataGridCheckBox}"
                                         EditingElementStyle="{DynamicResource MetroDataGridCheckBox}"
@@ -184,7 +184,7 @@
                 </Grid>
             </GroupBox>
         </Grid>
-        <Grid x:Name="gridMOBEditor" Visibility="Hidden">
+        <Grid x:Name="gridMOBEditor" Visibility="Hidden" Drop="gridMOBEditor_Drop" AllowDrop="True">
             <DataGrid x:Name="dataMOBEditor" Margin="0,0,0,117" ItemsSource="{Binding Entries}" IsTextSearchEnabled="True"/>
             <TextBox x:Name="textMOBEditorPath" HorizontalAlignment="Left" Height="12" Margin="10,579,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="1229" IsReadOnly="True"/>
             <Button x:Name="btnMOBEditorPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}"
@@ -199,7 +199,7 @@
             </GroupBox>
 
         </Grid>
-        <Grid x:Name="gridWPKEditor" Visibility="Hidden">
+        <Grid x:Name="gridWPKEditor" Visibility="Hidden" AllowDrop="True" Drop="gridWPKEditor_Drop">
             <DataGrid x:Name="dataWPKEditor" Margin="0,0,0,117" ItemsSource="{Binding Entries}" IsTextSearchEnabled="True"/>
             <TextBox x:Name="textWPKEditorPath" HorizontalAlignment="Left" Height="12" Margin="10,579,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="1229" IsReadOnly="True"/>
             <Button x:Name="btnWPKEditorPath" Content="{iconPacks:PackIconOcticons FileSymlinkDirectory, Width=12, Height=13}"
