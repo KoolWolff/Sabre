@@ -913,7 +913,7 @@ namespace Sabre
         public static string XXHash(string toHash)
         {
             string hash = "";
-            xxHash xx = new xxHash(640);
+            xxHash xx = new xxHash(64);
             byte[] temp = xx.ComputeHash(toHash, 64);
             foreach (byte b in temp)
             {

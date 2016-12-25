@@ -57,7 +57,6 @@ namespace Sabre
             }
             cfg = new Config("config", log);
             Functions.LoadSettings(cfg, this, out WADHashes);
-            ReleaseManifestFile relman = new ReleaseManifestFile("0.0.1.96.bkp.rlsm");
         }
         
         private void buttonGit(object sender, RoutedEventArgs e)

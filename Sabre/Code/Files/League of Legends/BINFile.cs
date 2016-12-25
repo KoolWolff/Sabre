@@ -30,6 +30,21 @@ namespace Sabre
                 }
                 EntryCount = br.ReadUInt32();
             }
+            public Header(MemoryStream ms)
+            {
+                BinaryReader br = new BinaryReader(ms);
+                Magic = Encoding.ASCII.GetString(br.ReadBytes(4));
+                Version = br.ReadUInt32();
+                if (Version == 2)
+                {
+                    ChildCount = br.ReadUInt32();
+                    for (int i = 0; i < ChildCount; i++)
+                    {
+                        AssociatedBIN.Add(new Associated(br));
+                    }
+                }
+                EntryCount = br.ReadUInt32();
+            }
         }
         public class Associated
         {

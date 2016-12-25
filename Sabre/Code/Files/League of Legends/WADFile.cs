@@ -28,10 +28,15 @@ namespace Sabre
                     br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
                     e.Data = br.ReadBytes((int)e.CompressedSize);
                     e.Data = Functions.DecompressGZipNew(e.Data);
-                    e.Name = Hashes.Find(x => Hash.XXHash(x) == e.XXHash);
+                    ///e.Name = Hashes.Find(x => Hash.XXHash(x) == e.XXHash);
                     if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
                     {
                         e.FileType = FileType.BIN;
+                        if(e.Name == "" || e.Name == null)
+                        {
+                            BINFile.Header bh = new BINFile.Header(new MemoryStream(e.Data));
+                            if (bh.AssociatedBIN.Count == 2) e.Name = bh.AssociatedBIN[1].Name;
+                        }
                     }
                 }
                 else if(e.Compression == CompressionType.String)
@@ -51,7 +56,7 @@ namespace Sabre
                 {
                     br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
                     e.Data = br.ReadBytes((int)e.UncompressedSize);
-                    e.Name = Hashes.Find(x => Hash.XXHash(x) == e.XXHash);
+                    //e.Name = Hashes.Find(x => Hash.XXHash(x) == e.XXHash);
                 }
                 else
                 {
