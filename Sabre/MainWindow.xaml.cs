@@ -26,6 +26,7 @@ namespace Sabre
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        private FlipViewDownloader fwd;
         private Config cfg;
         private Logger log;
         private string ecdsa;
@@ -57,6 +58,7 @@ namespace Sabre
             }
             cfg = new Config("config", log);
             Functions.LoadSettings(cfg, this, out WADHashes);
+            fwd = new FlipViewDownloader(this);
         }
         
         private void buttonGit(object sender, RoutedEventArgs e)
@@ -373,6 +375,51 @@ namespace Sabre
                             log.Write("WPK::IO | ERROR READING FILE", Logger.WriterType.WriteError); 
                     }
                 }
+            }
+        }
+
+        private void flipHome_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(flipHome.SelectedIndex == 0)
+            {
+                flipHome.BannerText = fwd.Views[0].Name;
+            }
+            else if(flipHome.SelectedIndex == 1)
+            {
+                flipHome.BannerText = fwd.Views[1].Name;
+            }
+            else
+            {
+                flipHome.BannerText = fwd.Views[2].Name;
+            }
+        }
+
+        private void gridFWClick(object sender, MouseButtonEventArgs e)
+        {
+            var s = (Grid)sender;
+            if(s.Name == "gridFW1")
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start(fwd.Views[0].skinURL);
+                }
+                catch (Exception) { }
+            }
+            else if (s.Name == "gridFW2")
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start(fwd.Views[1].skinURL);
+                }
+                catch (Exception) { }
+            }
+            else if (s.Name == "gridFW3")
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start(fwd.Views[2].skinURL);
+                }
+                catch (Exception) { }
             }
         }
     }

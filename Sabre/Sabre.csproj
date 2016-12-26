@@ -93,7 +93,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Code\Main\Quaternion.cs" />
+    <Compile Include="Code\Main\FlipViewDownloader.cs" />
+    <Compile Include="Code\Main\Utilities\Quaternion.cs" />
     <Compile Include="SkinInstallationWindow.xaml.cs">
       <DependentUpon>SkinInstallationWindow.xaml</DependentUpon>
     </Compile>
@@ -126,7 +127,7 @@
     <Compile Include="Code\Files\League of Legends\WGEOFile.cs" />
     <Compile Include="Code\Files\League of Legends\WPKFile.cs" />
     <Compile Include="Code\Main\EasterEgg.cs" />
-    <Compile Include="Code\Main\Functions.cs" />
+    <Compile Include="Code\Main\Utilities\Functions.cs" />
     <Compile Include="Code\Main\Logger.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

@@ -34,6 +34,25 @@
     </Controls:MetroWindow.LeftWindowCommands>
     <Grid x:Name="sabre">
         <Grid x:Name="main">
+            <Controls:FlipView x:Name="flipHome" Margin="300,10,10,240" MouseOverGlowEnabled="False" SelectionChanged="flipHome_SelectionChanged" BannerText="">
+                <Controls:FlipView.Items>
+                    <Grid x:Name="gridFW1" Cursor="Hand" MouseLeftButtonDown="gridFWClick" >
+                        <Grid.Background>
+                            <ImageBrush/>
+                        </Grid.Background>
+                    </Grid>
+                    <Grid x:Name="gridFW2" Cursor="Hand" MouseLeftButtonDown="gridFWClick">
+                        <Grid.Background>
+                            <ImageBrush/>
+                        </Grid.Background>
+                    </Grid>
+                    <Grid x:Name="gridFW3" Cursor="Hand" MouseLeftButtonDown="gridFWClick">
+                        <Grid.Background>
+                            <ImageBrush/>
+                        </Grid.Background>
+                    </Grid>
+                </Controls:FlipView.Items>
+            </Controls:FlipView>
             <Controls:Tile x:Name="tileSkinCollection" Title="Skin Collection" ToolTip="Acces your collection of skins" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalTitleAlignment="Center" Width="280" Click="openSkinCollection" Margin="10,10,984,541">
                 <Rectangle Width="280" Height="90" Margin="0,-30,0,0">
                     <Rectangle.Fill>
