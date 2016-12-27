@@ -59,6 +59,7 @@ namespace Sabre
             cfg = new Config("config", log);
             Functions.LoadSettings(cfg, this, out WADHashes);
             fwd = new FlipViewDownloader(this);
+            TroyiniFile ini = new TroyiniFile("AatroxQ_Tar_Green.troybin");
         }
         
         private void buttonGit(object sender, RoutedEventArgs e)

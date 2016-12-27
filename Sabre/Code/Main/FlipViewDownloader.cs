@@ -45,9 +45,9 @@ namespace Sabre
         {
             WebClient wc = new WebClient();
             string url = "https://drive.google.com/uc?export=download&id=0Bz9aB-8O_UqfTl9VR1hsRDBudWM";
-            wc.DownloadFile(url, "fwitems");
+            wc.DownloadFile(url, "fwitemsnew");
             List<string> ret = new List<string>();
-            ret.AddRange(File.ReadAllLines("fwitems"));
+            ret.AddRange(File.ReadAllLines("fwitemsnew"));
             return ret;
         }
     }
