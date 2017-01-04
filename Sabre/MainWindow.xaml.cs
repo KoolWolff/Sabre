@@ -30,6 +30,8 @@ namespace Sabre
         private Config cfg;
         private Logger log;
         private string ecdsa;
+        private ReleaseManifestFile rel;
+        private TroyiniFile ini;
         private WADFile wad;
         private MOBFile mob;
         private WPKFile wpk;
@@ -59,7 +61,7 @@ namespace Sabre
             cfg = new Config("config", log);
             Functions.LoadSettings(cfg, this, out WADHashes);
             fwd = new FlipViewDownloader(this);
-            TroyiniFile ini = new TroyiniFile("AatroxQ_Tar_Green.troybin");
+            rel = new ReleaseManifestFile("0.0.1.96.bkp.rlsm");
         }
         
         private void buttonGit(object sender, RoutedEventArgs e)
@@ -153,7 +155,7 @@ namespace Sabre
         {
             if (gridWADExtractor.Visibility == Visibility.Visible && e.Key == Key.E)
             {
-                MessageBox.Show(ecdsa); 
+                MessageBox.Show(ecdsa);
             }
         }
 
@@ -422,6 +424,36 @@ namespace Sabre
                 }
                 catch (Exception) { }
             }
+        }
+
+        private void btnTroyiniditorPath_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.Filter = "Troybin and Inibin files (*.troybin;*.inibin;)|*.troybin;*.inibin;";
+            if (ofd.ShowDialog() == true)
+            {
+                ini = new TroyiniFile(ofd.FileName);
+                foreach(TroyiniFile.TroyiniData data in ini.Data)
+                {
+                    TreeView tw = new TreeView();
+                    foreach(TroyiniFile.TroyiniValue prop in data.Values)
+                    {
+                        StackPanel sp = new StackPanel();
+                        sp.Orientation = Orientation.Horizontal;
+                        sp.Children.Add(new Label() { Content = prop.Prop.Hash });
+                        sp.Children.Add(new Label() { Content = prop.Value });
+                        tw.Items.Add(sp);
+                    }
+                    listTroyiniEditor.Items.Add(tw);
+                }
+            }
+        }
+
+        private void tileFileExtractor_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.SwitchGrids(main, gridFileExtractor);
+            var tp = new ItemProvider();
+            DataContext = tp.GetItems(rel.Directories, rel.Files);
         }
     }
 }

@@ -20,19 +20,10 @@ namespace Sabre.Code.Files
             br = new BinaryReader(File.Open(fileLocation, FileMode.Open));
 
             h = new Header(br);
+            m = new Metadata(br);
             for(int i = 0; i < h.FileCount; i++)
             {
-                Files.Add(new ArchiveFile(br.ReadUInt32()));
-            }
-            foreach(ArchiveFile f in Files)
-            {
-                f.NameLength = br.ReadUInt16();
-                f.Name = Encoding.ASCII.GetString(br.ReadBytes(f.NameLength));
-                f.DataOffset = br.ReadUInt64();
-                f.DataSize = br.ReadUInt64();
-                br.BaseStream.Seek((long)f.DataOffset, SeekOrigin.Begin);
-                f.Data = br.ReadBytes((int)f.DataSize);
-                f.Data = Functions.DecompressGZip(f.Data);
+                Files.Add(new ArchiveFile(br));
             }
             ChewyIsLove = Encoding.ASCII.GetString(br.ReadBytes((int)br.BaseStream.Length - (int)br.BaseStream.Position));
         }
@@ -55,33 +46,31 @@ namespace Sabre.Code.Files
         public class Metadata
         {
             public SkinType PrimaryType;
-            public UInt16 SecondaryTypeLength;
             public string SecondaryType;
-            public UInt16 NameLength, AuthorLength, VersionLength;
             public string Name, Author, Version;
             public Metadata(BinaryReader br)
             {
                 PrimaryType = (SkinType)br.ReadByte();
-                SecondaryTypeLength = br.ReadUInt16();
-                SecondaryType = Encoding.ASCII.GetString(br.ReadBytes(SecondaryTypeLength));
-                NameLength = br.ReadUInt16();
-                AuthorLength = br.ReadUInt16();
-                VersionLength = br.ReadUInt16();
-                Name = Encoding.ASCII.GetString(br.ReadBytes(NameLength));
-                Author = Encoding.ASCII.GetString(br.ReadBytes(AuthorLength));
-                Version = Encoding.ASCII.GetString(br.ReadBytes(VersionLength));
+                SecondaryType = Encoding.ASCII.GetString(br.ReadBytes(br.ReadUInt16()));
+                Name = Encoding.ASCII.GetString(br.ReadBytes(br.ReadUInt16()));
+                Author = Encoding.ASCII.GetString(br.ReadBytes(br.ReadUInt16()));
+                Version = Encoding.ASCII.GetString(br.ReadBytes(br.ReadUInt16()));
             }
         }
         public class ArchiveFile
         {
-            public UInt16 NameLength;
             public string Name;
             public UInt64 DataOffset, DataSize;
             public byte[] Data;
             public UInt32 mOffset;
-            public ArchiveFile(UInt32 metaOffset)
+            public ArchiveFile(BinaryReader br)
             {
-                mOffset = metaOffset;
+                Name = Encoding.ASCII.GetString(br.ReadBytes(br.ReadUInt16()));
+                DataOffset = br.ReadUInt64();
+                DataSize = br.ReadUInt64();
+                br.BaseStream.Seek((long)DataOffset, SeekOrigin.Begin);
+                Data = br.ReadBytes((int)DataSize);
+                Data = Functions.DecompressGZip(Data);
             }
         }
         public enum SkinType : byte

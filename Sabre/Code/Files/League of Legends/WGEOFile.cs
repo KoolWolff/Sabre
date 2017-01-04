@@ -13,7 +13,7 @@ namespace Sabre
         public Header header;
         public ParticleGeometry partGeo;
         public List<Model> Models = new List<Model>();
-        public WGEOFile(string fileLocation, bool readParticleGeometry = false) //Assigned false to readParticleGeometry because I dont want to read it unless I declare it 
+        public WGEOFile(string fileLocation, bool readParticleGeometry = false) 
         {
             br = new BinaryReader(File.Open(fileLocation, FileMode.Open));
             header = new Header(br);
@@ -21,7 +21,7 @@ namespace Sabre
             {
                 Models.Add(new Model(br));
             }
-            if(readParticleGeometry == true)
+            if(readParticleGeometry)
             {
                 partGeo = new ParticleGeometry(br);
             }
@@ -42,7 +42,6 @@ namespace Sabre
         }
         public class Model
         {
-            public long StartOffset, EndOffset;
             public string TextureName;
             public string MaterialName;
             public float[] Sphere = new float[4]; //Vec3 - Pos | Sphere Radius ?? - dunno
@@ -54,7 +53,6 @@ namespace Sabre
             public List<UInt16> Indices = new List<UInt16>();
             public Model(BinaryReader br)
             {
-                StartOffset = br.BaseStream.Position;
                 TextureName = Encoding.ASCII.GetString(br.ReadBytes(260));
                 MaterialName = Encoding.ASCII.GetString(br.ReadBytes(64));
                 for(int i = 0; i < 4; i++)
@@ -79,7 +77,6 @@ namespace Sabre
                 {
                     Indices.Add(br.ReadUInt16());
                 }
-                EndOffset = br.BaseStream.Position;
             }
         }
         public class Vertex
@@ -111,8 +108,7 @@ namespace Sabre
             public UInt32 Unk; //128 ?
             public UInt32 VectorCount;
             public UInt32 IndiceCount;
-            public List<Vector3> Vectors = new List<Vector3>();
-            public UInt32 UnkAfterVector;
+            public List<float[]> Vectors = new List<float[]>();
             public List<UInt16> Indices = new List<UInt16>();
             public ParticleGeometry(BinaryReader br)
             {
@@ -129,23 +125,11 @@ namespace Sabre
                 IndiceCount = br.ReadUInt32();
                 for(int i = 0; i < VectorCount; i++)
                 {
-                    Vectors.Add(new Vector3(br));
+                    Vectors.Add(new float[] { br.ReadSingle(), br.ReadSingle(), br.ReadSingle() });
                 }
-                UnkAfterVector = br.ReadUInt32();
                 for(int i = 0; i < IndiceCount; i++)
                 {
                     Indices.Add(br.ReadUInt16());
-                }
-            }
-        }
-        public class Vector3
-        {
-            public float[] f = new float[3];
-            public Vector3(BinaryReader br)
-            {
-                for(int i = 0; i < 3; i++)
-                {
-                    f[i] = br.ReadSingle();
                 }
             }
         }

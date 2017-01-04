@@ -27,7 +27,7 @@ namespace Sabre
                 {
                     br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
                     e.Data = br.ReadBytes((int)e.CompressedSize);
-                    e.Data = Functions.DecompressGZipNew(e.Data);
+                    e.Data = Functions.DecompressGZip(e.Data);
                     ///e.Name = Hashes.Find(x => Hash.XXHash(x) == e.XXHash);
                     if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
                     {

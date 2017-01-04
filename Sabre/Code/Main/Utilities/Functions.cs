@@ -50,28 +50,6 @@ namespace Sabre
         }
         public static byte[] DecompressGZip(byte[] gzip)
         {
-            using (System.IO.Compression.GZipStream stream = new System.IO.Compression.GZipStream(new MemoryStream(gzip), System.IO.Compression.CompressionMode.Decompress))
-            {
-                const int size = 4096;
-                byte[] buffer = new byte[size];
-                using (MemoryStream memory = new MemoryStream())
-                {
-                    int count = 0;
-                    do
-                    {
-                        count = stream.Read(buffer, 0, size);
-                        if (count > 0)
-                        {
-                            memory.Write(buffer, 0, count);
-                        }
-                    }
-                    while (count > 0);
-                    return memory.ToArray();
-                }
-            }
-        }
-        public static byte[] DecompressGZipNew(byte[] gzip)
-        {
             return Ionic.Zlib.GZipStream.UncompressBuffer(gzip);
         }
         public static Quaternion Decompress48BitQuaternion(int AxisFlg, short s2f, short s1f, short s0f)
@@ -413,6 +391,10 @@ namespace Sabre
                 }
             }
             GC.Collect();
+        }
+        public static void PopulateFileExtractor(TreeView tree)
+        {
+
         }
 
         public static string ModifyMOBName(string name)

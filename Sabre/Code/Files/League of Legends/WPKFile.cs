@@ -38,6 +38,11 @@ namespace Sabre
             {
                 br.BaseStream.Seek(a.DataOffset, SeekOrigin.Begin);
                 a.Data = br.ReadBytes((int)a.DataSize);
+                br.BaseStream.Seek(a.DataOffset + 28, SeekOrigin.Begin);
+                double byteRate = br.ReadUInt32();
+                br.BaseStream.Seek(a.DataOffset + 40, SeekOrigin.Begin);
+                double size = br.ReadUInt32();
+                a.Duration = size / byteRate;
             }
             br.Dispose();
             br.Close();
@@ -62,6 +67,7 @@ namespace Sabre
             public UInt32 NameLength;
             public char[] tempName;
             public string Name {get; set; }
+            public double Duration { get; set; }
             public byte[] Data;
             public AudioFile(UInt32 metaOffset)
             {

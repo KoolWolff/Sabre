@@ -93,6 +93,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Code\Files\Sabre\SkinDatabseFile.cs" />
     <Compile Include="Code\Main\FlipViewDownloader.cs" />
     <Compile Include="Code\Main\Utilities\Quaternion.cs" />
     <Compile Include="SkinInstallationWindow.xaml.cs">
@@ -112,14 +113,12 @@
     <Compile Include="Code\Files\League of Legends\BNK\WwiseBankSection.cs" />
     <Compile Include="Code\Files\League of Legends\TroyiniFile.cs" />
     <Compile Include="Code\Files\Sabre\Config.cs" />
-    <Compile Include="Code\Files\Sabre\DBFile.cs" />
     <Compile Include="Code\Files\League of Legends\MOBFile.cs" />
     <Compile Include="Code\Files\League of Legends\NVRFile.cs" />
     <Compile Include="Code\Files\League of Legends\ParticlesFile.cs" />
     <Compile Include="Code\Files\League of Legends\RAFFile.cs" />
     <Compile Include="Code\Files\League of Legends\ReleaseManifestFile.cs" />
     <Compile Include="Code\Files\Sabre\SBRFile.cs" />
-    <Compile Include="Code\Files\Sabre\SBTFile.cs" />
     <Compile Include="Code\Files\League of Legends\SCBFile.cs" />
     <Compile Include="Code\Files\League of Legends\SCOFile.cs" />
     <Compile Include="Code\Files\League of Legends\SKNFile.cs" />
