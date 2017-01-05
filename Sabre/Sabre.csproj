@@ -94,6 +94,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Code\Files\Sabre\SkinDatabseFile.cs" />
+    <Compile Include="Code\Files\Wooxy\WXYFile.cs" />
     <Compile Include="Code\Main\FlipViewDownloader.cs" />
     <Compile Include="Code\Main\Utilities\Quaternion.cs" />
     <Compile Include="SkinInstallationWindow.xaml.cs">
