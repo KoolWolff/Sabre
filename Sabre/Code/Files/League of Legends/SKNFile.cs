@@ -113,8 +113,8 @@ namespace Sabre
         public class Vertex
         {
             public float[] Position = new float[3];
-			public UInt32 BoneIndex;
-			public float[] Weights = new float[4]; //4 orig
+			public byte[] BoneIDs;
+			public float[] Weights = new float[4];
 			public float[] Normal = new float[3];
 			public float[] UV = new float[2];
             public List<Int32> Additionals = new List<Int32>();
@@ -124,7 +124,7 @@ namespace Sabre
                 {
                     Position[i] = br.ReadSingle();
                 }
-                BoneIndex = br.ReadUInt32();
+                BoneIDs = br.ReadBytes(4);
                 for(int i = 0; i < 2; i++) 
                 {
                     Weights[i] = br.ReadSingle();
@@ -148,7 +148,7 @@ namespace Sabre
                 {
                     Position[i] = br.ReadSingle();
                 }
-                BoneIndex = br.ReadUInt32();
+                BoneIDs = br.ReadBytes(4);
                 for (int i = 0; i < 2; i++)
                 {
                     Weights[i] = br.ReadSingle();

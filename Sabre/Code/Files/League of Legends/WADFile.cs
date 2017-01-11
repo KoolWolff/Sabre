@@ -13,6 +13,7 @@ namespace Sabre
         public BinaryReader br;
         public Header header;
         public List<Entry> Entries = new List<Entry>();
+        public List<Identifier> Identifiers = new List<Identifier>();
         public WADFile(string fileLocation, Logger log, List<string> Hashes)
         {
             br = new BinaryReader(File.Open(fileLocation, FileMode.Open));
@@ -20,6 +21,7 @@ namespace Sabre
             for(int i = 0; i < header.FileCount; i++)
             {
                 Entries.Add(new Entry(br));
+                Identifiers.Add(new Identifier() { xxHash = Entries[i].XXHash, Name = Hashes.Find(x => Hash.XXHash(x) == Entries[i].XXHash.ToString()) });
             }
             foreach(Entry e in Entries)
             {
@@ -97,7 +99,7 @@ namespace Sabre
             public string Size { get; set; }
             public string Name { get; set; }
             public byte[] Data;
-            public string XXHash { get; set; }
+            public UInt64 XXHash { get; set; }
             public UInt32 FileDataOffset;
             public UInt32 CompressedSize;
             public UInt32 UncompressedSize;
@@ -106,7 +108,7 @@ namespace Sabre
             public UInt64 SHA256;
             public Entry(BinaryReader br)
             {
-                XXHash = br.ReadUInt64().ToString("X2");
+                XXHash = br.ReadUInt64();
                 FileDataOffset = br.ReadUInt32();
                 CompressedSize = br.ReadUInt32();
                 UncompressedSize = br.ReadUInt32();
@@ -114,6 +116,11 @@ namespace Sabre
                 SHA256 = br.ReadUInt64();
                 Size = Functions.SizeSuffix(UncompressedSize);
             }
+        }
+        public struct Identifier
+        {
+            public UInt64 xxHash;
+            public string Name;
         }
         public enum CompressionType : UInt32
         {

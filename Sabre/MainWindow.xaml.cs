@@ -28,7 +28,7 @@ namespace Sabre
     {
         private FlipViewDownloader fwd;
         private Config cfg;
-        private Logger log;
+        private Logger log = new Logger(DateTime.Now.ToString("HH-mm-ss"));
         private string ecdsa;
         private ReleaseManifestFile rel;
         private TroyiniFile ini;
@@ -38,30 +38,34 @@ namespace Sabre
         public List<string> WADHashes = new List<string>();
         public MainWindow()
         {
-            log = new Logger(DateTime.Now.ToString("HH-mm-ss"));
-            log.Write("LOGGER INITIALIZED", Logger.WriterType.WriteMessage);
-            InitializeComponent();
-            log.Write("SABRE INITIALIZED", Logger.WriterType.WriteMessage);
-            if (File.Exists("config") == false)
+            try
             {
-                var c = File.Create("config");
-                c.Close();
-                Config.Setting.Write(Functions.GetLoLPath(), Config.SettingType.LoLPath);
-                Config.Setting.Write("BaseDark", Config.SettingType.Theme);
-                Config.Setting.Write("Teal", Config.SettingType.Accent);
-                Config.Setting.Write("", Config.SettingType.WADPath);
-                Config.Setting.Write("", Config.SettingType.WADExtractionPath);
-                Config.Setting.Write("", Config.SettingType.MOBPath);
-                Config.Setting.Write("", Config.SettingType.MOBExtractionPath);
-                Config.Setting.Write("", Config.SettingType.MOBImportationPath);
-                Config.Setting.Write("", Config.SettingType.WPKPath);
-                Config.Setting.Write("", Config.SettingType.WPKExtractionPath);
-                Config.Setting.Write("", Config.SettingType.WPKImportationPath);
+                InitializeComponent();
+                log.Write("SABRE INITIALIZED", Logger.WriterType.WriteMessage);
+                if (!File.Exists("config"))
+                {
+                    var c = File.Create("config");
+                    c.Close();
+                    Config.Setting.Write(Functions.GetLoLPath(), Config.SettingType.LoLPath);
+                    Config.Setting.Write("BaseDark", Config.SettingType.Theme);
+                    Config.Setting.Write("Teal", Config.SettingType.Accent);
+                    Config.Setting.Write("", Config.SettingType.WADPath);
+                    Config.Setting.Write("", Config.SettingType.WADExtractionPath);
+                    Config.Setting.Write("", Config.SettingType.MOBPath);
+                    Config.Setting.Write("", Config.SettingType.MOBExtractionPath);
+                    Config.Setting.Write("", Config.SettingType.MOBImportationPath);
+                    Config.Setting.Write("", Config.SettingType.WPKPath);
+                    Config.Setting.Write("", Config.SettingType.WPKExtractionPath);
+                    Config.Setting.Write("", Config.SettingType.WPKImportationPath);
+                }
+                cfg = new Config("config", log);
+                Functions.LoadSettings(cfg, this, out WADHashes);
+                fwd = new FlipViewDownloader(this);
             }
-            cfg = new Config("config", log);
-            Functions.LoadSettings(cfg, this, out WADHashes);
-            fwd = new FlipViewDownloader(this);
-            rel = new ReleaseManifestFile("0.0.1.96.bkp.rlsm");
+            catch(Exception exception)
+            {
+                log.Write("CRASH OCCURED | Exception Type: " + exception.InnerException.ToString() + " | Source: " + exception.Source + " | Message: " + exception.Message, Logger.WriterType.WriteCrash);
+            }
         }
         
         private void buttonGit(object sender, RoutedEventArgs e)
@@ -452,8 +456,6 @@ namespace Sabre
         private void tileFileExtractor_Click(object sender, RoutedEventArgs e)
         {
             Functions.SwitchGrids(main, gridFileExtractor);
-            var tp = new ItemProvider();
-            DataContext = tp.GetItems(rel.Directories, rel.Files);
         }
     }
 }

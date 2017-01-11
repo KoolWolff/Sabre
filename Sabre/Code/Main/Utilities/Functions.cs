@@ -907,7 +907,7 @@ namespace Sabre
         {
             string hash = "";
             xxHash xx = new xxHash(64);
-            byte[] temp = xx.ComputeHash(toHash, 64);
+            byte[] temp = xx.ComputeHash(toHash);
             foreach (byte b in temp)
             {
                 hash += b.ToString("X2");

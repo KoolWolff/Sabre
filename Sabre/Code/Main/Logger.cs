@@ -39,28 +39,24 @@ namespace Sabre
             File.AppendAllText(Environment.CurrentDirectory + "\\Logs\\" + "log - " + Time + ".txt", "MESSAGE | "
                 + DateTime.Now.ToString("HH-mm-ss")
                 + " | " + message + Environment.NewLine);
-            GC.Collect();
         }
         private void WriteError(string error)
         {
             File.AppendAllText(Environment.CurrentDirectory + "\\Logs\\" + "log - " + Time + ".txt", "ERROR   | "
                 + DateTime.Now.ToString("HH-mm-ss") + " | "
                 + error + Environment.NewLine);
-            GC.Collect();
         }
         private void WriteWarning(string warning)
         {
             File.AppendAllText(Environment.CurrentDirectory + "\\Logs\\" + "log - " + Time + ".txt", "WARNING | "
                 + DateTime.Now.ToString("HH-mm-ss") + " | "
                 + warning + Environment.NewLine);
-            GC.Collect();
         }
         private void WriteCrash(string crash)
         {
             File.AppendAllText(Environment.CurrentDirectory + "\\Logs\\" + "log - " + Time + ".txt", "CRASH   | "
                 + DateTime.Now.ToString("HH-mm-ss") + " | "
                 + crash + Environment.NewLine);
-            GC.Collect();
         }
         public void DeleteLogs()
         {

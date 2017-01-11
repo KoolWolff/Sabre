@@ -9,18 +9,6 @@
                       Width="1280" ResizeMode="CanMinimize"
                       GlowBrush="{DynamicResource AccentColorBrush}" 
                       KeyDown="MetroWindow_KeyDown" Closing="MetroWindow_Closing">
-    <Window.Resources>
-
-        <HierarchicalDataTemplate DataType="{x:Type Model:DirectoryItem}"
-                                  ItemsSource="{Binding Items}">
-            <TextBlock Text="{Binding Path=Name}" ToolTip="{Binding Path=Path}" />
-        </HierarchicalDataTemplate>
-
-        <DataTemplate DataType="{x:Type Model:FileItem}">
-            <TextBlock Text="{Binding Path=Name}" ToolTip="{Binding Path=Path}" />
-        </DataTemplate>
-
-    </Window.Resources>
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Content="{iconPacks:PackIconOcticons MarkGithub, Width=20, Height=20}"
@@ -46,7 +34,7 @@
         </Controls:WindowCommands>
     </Controls:MetroWindow.LeftWindowCommands>
     <Grid x:Name="sabre">
-        <Grid x:Name="main" Visibility="Hidden">
+        <Grid x:Name="main">
             <Controls:FlipView x:Name="flipHome" Margin="300,10,10,240" MouseOverGlowEnabled="False" SelectionChanged="flipHome_SelectionChanged" BannerText="">
                 <Controls:FlipView.Items>
                     <Grid x:Name="gridFW1" Cursor="Hand" MouseLeftButtonDown="gridFWClick" >
@@ -155,7 +143,7 @@
                 </Grid>
             </GroupBox>
         </Grid>
-        <Grid x:Name="gridSkinCollection">
+        <Grid x:Name="gridSkinCollection" Visibility="Hidden">
             <ListBox x:Name="listSkins" HorizontalAlignment="Left" Height="532" Margin="10,10,0,0" VerticalAlignment="Top" Width="1254"/>
         </Grid>
         <Grid x:Name="gridSkinCreation" Visibility="Hidden">

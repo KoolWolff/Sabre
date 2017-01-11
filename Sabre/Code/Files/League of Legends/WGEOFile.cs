@@ -44,7 +44,7 @@ namespace Sabre
         {
             public string TextureName;
             public string MaterialName;
-            public float[] Sphere = new float[4]; //Vec3 - Pos | Sphere Radius ?? - dunno
+            public float[] Sphere = new float[4]; //Vec3 - Pos | Sphere Radius 
             public float[] Min = new float[3];
             public float[] Max = new float[3];
             public UInt32 VertCount;
@@ -120,7 +120,7 @@ namespace Sabre
                 CenterZ = br.ReadSingle();
                 MinY = br.ReadSingle();
                 MaxY = br.ReadSingle();
-                Unk = br.ReadUInt32();
+                Unk = br.ReadUInt32(); //128
                 VectorCount = br.ReadUInt32();
                 IndiceCount = br.ReadUInt32();
                 for(int i = 0; i < VectorCount; i++)
