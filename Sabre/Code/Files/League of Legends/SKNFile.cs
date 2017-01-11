@@ -125,7 +125,7 @@ namespace Sabre
                     Position[i] = br.ReadSingle();
                 }
                 BoneIDs = br.ReadBytes(4);
-                for(int i = 0; i < 2; i++) 
+                for(int i = 0; i < 4; i++) 
                 {
                     Weights[i] = br.ReadSingle();
                 }
@@ -149,7 +149,7 @@ namespace Sabre
                     Position[i] = br.ReadSingle();
                 }
                 BoneIDs = br.ReadBytes(4);
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     Weights[i] = br.ReadSingle();
                 }
