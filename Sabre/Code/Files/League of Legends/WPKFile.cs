@@ -38,11 +38,10 @@ namespace Sabre
             {
                 br.BaseStream.Seek(a.DataOffset, SeekOrigin.Begin);
                 a.Data = br.ReadBytes((int)a.DataSize);
-                br.BaseStream.Seek(a.DataOffset + 28, SeekOrigin.Begin);
-                double byteRate = br.ReadUInt32();
-                br.BaseStream.Seek(a.DataOffset + 40, SeekOrigin.Begin);
-                double size = br.ReadUInt32();
-                a.Duration = size / byteRate;
+                br.BaseStream.Seek(a.DataOffset + 24, SeekOrigin.Begin);
+                double frequency = br.ReadUInt32();
+                double blockByteCount = br.ReadUInt32();
+                a.Duration = (a.DataSize - 44) / (blockByteCount * frequency);
             }
             br.Dispose();
             br.Close();

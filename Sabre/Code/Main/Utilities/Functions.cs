@@ -6,12 +6,13 @@ using System.Windows.Controls;
 using Ionic.Zlib;
 using System.Collections.Generic;
 using WPFFolderBrowser;
-using System.Data.HashFunction;
 using System.Collections.ObjectModel;
 using SabreAPI;
+using System.Text;
 
 namespace Sabre
 {
+
     class Functions
     {
         private static readonly string[] SizeSuffixes = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
@@ -426,6 +427,18 @@ namespace Sabre
     }
     class Hash
     {
+        public static byte[] WADPublicKey = {
+            0x30, 0x59, 0x30, 0x13, 0x06, 0x07, 0x2A, 0x86, 0x48, 0xCE,
+            0x3D, 0x02, 0x01, 0x06, 0x08, 0x2A, 0x86, 0x48, 0xCE, 0x3D,
+            0x03, 0x01, 0x07, 0x03, 0x42, 0x00, 0x04, 0x01, 0xE7, 0x1B,
+            0xDD, 0x1D, 0x2F, 0xF5, 0x9C, 0x70, 0x8C, 0xEC, 0xAA, 0xE2,
+            0x5D, 0xB4, 0xDB, 0x85, 0x50, 0x6D, 0x6B, 0x06, 0xED, 0x3B,
+            0xE6, 0x21, 0xF8, 0x1A, 0xD4, 0x85, 0xFD, 0x68, 0x18, 0x8E,
+            0xC5, 0x6B, 0xE1, 0x4E, 0x69, 0x00, 0x8C, 0x69, 0xDE, 0x66,
+            0xF8, 0x16, 0x9F, 0xF3, 0xB2, 0xF5, 0x38, 0x6B, 0x67, 0xB1,
+            0xF1, 0xBE, 0x96, 0x92, 0x04, 0x88, 0x89, 0xEF, 0x3E, 0xE0,
+            0x2B
+        };
         public static uint RAF(string s)
         {
             UInt32 hash = 0;
@@ -903,16 +916,18 @@ namespace Sabre
             }
             return hash;
         }
-        public static string XXHash(string toHash)
+        public static string xxHash(string toHash)
         {
-            string hash = "";
-            xxHash xx = new xxHash(64);
-            byte[] temp = xx.ComputeHash(toHash);
-            foreach (byte b in temp)
-            {
-                hash += b.ToString("X2");
-            }
-            return hash;
+            byte[] input = Encoding.ASCII.GetBytes(toHash.ToLower());
+            return XXHash.XXH64(input).ToString("X2");
+        }
+        public static string xxHashDigest(string toHash)
+        {
+            XXHash.State64 state64 = new XXHash.State64();
+            XXHash.ResetState64(state64, 0);
+            XXHash.UpdateState64(state64, Functions.StringToByteArray(toHash.ToLower()));
+            string outp = XXHash.DigestState64(state64).ToString("X2");
+            return outp;
         }
         public static UInt32 Adler32(byte[] toHash)
         {

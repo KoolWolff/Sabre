@@ -45,10 +45,6 @@
       <HintPath>..\packages\MahApps.Metro.IconPacks.Octicons.1.6.0\lib\net45\MahApps.Metro.IconPacks.Octicons.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MahApps.Metro.SimpleChildWindow, Version=1.3.0.0, Culture=neutral, PublicKeyToken=bbbfdff7f500a992, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.SimpleChildWindow.1.3.0\lib\net45\MahApps.Metro.SimpleChildWindow.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="SabreAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\SabreAPI\SabreAPI\bin\Debug\SabreAPI.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -56,18 +52,6 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.HashFunction.Core, Version=1.8.2.2, Culture=neutral, PublicKeyToken=80c9288e394c1322, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.HashFunction.Core.1.8.2.2\lib\net45\System.Data.HashFunction.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Data.HashFunction.Interfaces, Version=1.0.0.2, Culture=neutral, PublicKeyToken=80c9288e394c1322, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.HashFunction.Interfaces.1.0.0.2\lib\net45\System.Data.HashFunction.Interfaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Data.HashFunction.xxHash, Version=1.8.2.2, Culture=neutral, PublicKeyToken=80c9288e394c1322, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.HashFunction.xxHash.1.8.2.2\lib\net45\System.Data.HashFunction.xxHash.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.4.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
@@ -97,6 +81,11 @@
     <Compile Include="Code\Files\Wooxy\WXYFile.cs" />
     <Compile Include="Code\Main\FlipViewDownloader.cs" />
     <Compile Include="Code\Main\Utilities\Quaternion.cs" />
+    <Compile Include="Code\Main\Utilities\XXHash.cs" />
+    <Compile Include="Code\Main\Utilities\XXHash32.cs" />
+    <Compile Include="Code\Main\Utilities\XXHash32CryptoServiceProvider.cs" />
+    <Compile Include="Code\Main\Utilities\XXHash64.cs" />
+    <Compile Include="Code\Main\Utilities\XXHash64CryptoServiceProvider.cs" />
     <Compile Include="SkinInstallationWindow.xaml.cs">
       <DependentUpon>SkinInstallationWindow.xaml</DependentUpon>
     </Compile>

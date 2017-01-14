@@ -20,8 +20,8 @@ namespace Sabre
             header = new Header(br);
             for(int i = 0; i < header.FileCount; i++)
             {
-                Entries.Add(new Entry(br));
-                Identifiers.Add(new Identifier() { xxHash = Entries[i].XXHash, Name = Hashes.Find(x => Hash.XXHash(x) == Entries[i].XXHash.ToString()) });
+                Entries.Add(new Entry(br, header.Version));
+                Identifiers.Add(new Identifier() { xxHash = Entries[i].XXHash, Name = Hashes.Find(x => Hash.xxHash(x) == Entries[i].XXHash.ToString()) });
             }
             foreach(Entry e in Entries)
             {
@@ -30,7 +30,7 @@ namespace Sabre
                     br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
                     e.Data = br.ReadBytes((int)e.CompressedSize);
                     e.Data = Functions.DecompressGZip(e.Data);
-                    ///e.Name = Hashes.Find(x => Hash.XXHash(x) == e.XXHash);
+                    e.Name = Hashes.Find(x => Hash.xxHash(x) == e.XXHash);
                     if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
                     {
                         e.FileType = FileType.BIN;
@@ -59,7 +59,7 @@ namespace Sabre
                 {
                     br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
                     e.Data = br.ReadBytes((int)e.UncompressedSize);
-                    //e.Name = Hashes.Find(x => Hash.XXHash(x) == e.XXHash);
+                    e.Name = Hashes.Find(x => Hash.xxHash(x) == e.XXHash);
                 }
                 else
                 {
@@ -69,13 +69,15 @@ namespace Sabre
         }
         public class Header
         {
+            public string Version;
             public string Magic;
             public byte Major;
             public byte Minor;
             public byte ECDSALength;
             public byte[] ECDSA {get; set;}
             public byte[] ZeroPadding;
-            public UInt64 Checksum;
+            public UInt64 WADFileID; //According to SS, previously "Checksum"
+            public string ChecksumS;
             public UInt16 TOCStartOffset;
             public UInt16 TOCFileEntrySize;
             public UInt32 FileCount;
@@ -84,13 +86,17 @@ namespace Sabre
                 Magic = Encoding.ASCII.GetString(br.ReadBytes(2));
                 Major = br.ReadByte();
                 Minor = br.ReadByte();
-                ECDSALength = br.ReadByte();
-                ECDSA = br.ReadBytes(80);
-                ZeroPadding = br.ReadBytes(3);
-                Checksum = br.ReadUInt64();
+                Version = Major.ToString() + "." + Minor.ToString();
+                if (Version == "2.0")
+                {
+                    ECDSALength = br.ReadByte();
+                    ECDSA = br.ReadBytes(80);
+                    ZeroPadding = br.ReadBytes(3);
+                }
+                WADFileID = br.ReadUInt64();
                 TOCStartOffset = br.ReadUInt16();
                 TOCFileEntrySize = br.ReadUInt16();
-                FileCount = br.ReadUInt32();
+                FileCount = br.ReadUInt32();   
             }
         }
         public class Entry
@@ -99,27 +105,28 @@ namespace Sabre
             public string Size { get; set; }
             public string Name { get; set; }
             public byte[] Data;
-            public UInt64 XXHash { get; set; }
+            public string XXHash { get; set; }
             public UInt32 FileDataOffset;
             public UInt32 CompressedSize;
             public UInt32 UncompressedSize;
             public CompressionType Compression { get; set; }
             public FileType FileType { get; set; }
             public UInt64 SHA256;
-            public Entry(BinaryReader br)
+            public Entry(BinaryReader br, string Version)
             {
-                XXHash = br.ReadUInt64();
+                XXHash = br.ReadUInt64().ToString("X2");
                 FileDataOffset = br.ReadUInt32();
                 CompressedSize = br.ReadUInt32();
                 UncompressedSize = br.ReadUInt32();
                 Compression = (CompressionType)br.ReadUInt32();
-                SHA256 = br.ReadUInt64();
+                if(Version == "2.0")
+                    SHA256 = br.ReadUInt64();
                 Size = Functions.SizeSuffix(UncompressedSize);
             }
         }
         public struct Identifier
         {
-            public UInt64 xxHash;
+            public string xxHash;
             public string Name;
         }
         public enum CompressionType : UInt32
