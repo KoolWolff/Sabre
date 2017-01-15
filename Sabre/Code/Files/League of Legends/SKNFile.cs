@@ -41,7 +41,7 @@ namespace Sabre
                 }
                 for (int i = 0; i < VertCount; i++)
                 {
-                    Vertices.Add(new Vertex(br, (int)boundingbox.AdditionalsCount));
+                    Vertices.Add(new Vertex(br, boundingbox.TangentBoolean));
                 }
             }
             else if (header.Version == 2)
@@ -89,7 +89,7 @@ namespace Sabre
         public class Metadata
         {
             public UInt32 VertexSize;
-            public UInt32 AdditionalsCount;
+            public UInt32 TangentBoolean;
             public float MinX;
             public float MinY;
             public float MinZ;
@@ -100,7 +100,7 @@ namespace Sabre
             public Metadata(BinaryReader br)
             {
                 VertexSize = br.ReadUInt32();
-                AdditionalsCount = br.ReadUInt32();
+                TangentBoolean = br.ReadUInt32();
                 MinX = br.ReadSingle();
                 MinY = br.ReadSingle();
                 MinZ = br.ReadSingle();
@@ -117,8 +117,9 @@ namespace Sabre
 			public float[] Weights = new float[4];
 			public float[] Normal = new float[3];
 			public float[] UV = new float[2];
+            public byte[] Tangent = new byte[4];
             public List<Int32> Additionals = new List<Int32>();
-            public Vertex(BinaryReader br, int AdditionalCount)
+            public Vertex(BinaryReader br, uint AdditionalCount)
             {
                 for(int i = 0; i < 3; i++)
                 {
@@ -137,9 +138,10 @@ namespace Sabre
                 {
                     UV[i] = br.ReadSingle();
                 }
-                for(int i = 0; i < AdditionalCount; i++)
+                if (AdditionalCount == 1) return;
+                for(int i = 0; i < 4; i++)
                 {
-                    Additionals.Add(br.ReadInt32());
+                    Tangent[i] = br.ReadByte();
                 }
             }
             public Vertex(BinaryReader br)
