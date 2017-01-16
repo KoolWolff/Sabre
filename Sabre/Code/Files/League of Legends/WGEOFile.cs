@@ -105,10 +105,11 @@ namespace Sabre
             public float CenterZ;
             public float MinY;
             public float MaxY;
-            public UInt32 Unk; //128 ?
+            public UInt32 BucketsPerSideCount;
             public UInt32 VectorCount;
             public UInt32 IndiceCount;
             public List<float[]> Vectors = new List<float[]>();
+            public List<ParticleVector> ParticleVectors = new List<ParticleVector>();
             public List<UInt16> Indices = new List<UInt16>();
             public ParticleGeometry(BinaryReader br)
             {
@@ -120,7 +121,7 @@ namespace Sabre
                 CenterZ = br.ReadSingle();
                 MinY = br.ReadSingle();
                 MaxY = br.ReadSingle();
-                Unk = br.ReadUInt32(); //128
+                BucketsPerSideCount = br.ReadUInt32();
                 VectorCount = br.ReadUInt32();
                 IndiceCount = br.ReadUInt32();
                 for(int i = 0; i < VectorCount; i++)
@@ -131,6 +132,28 @@ namespace Sabre
                 {
                     Indices.Add(br.ReadUInt16());
                 }
+                while(br.BaseStream.Position < br.BaseStream.Length)
+                {
+                    ParticleVectors.Add(new ParticleVector(br));
+                }
+            }
+        }
+        public class ParticleVector
+        {
+            public float maxOutStickX;
+            public float maxOutStickZ;
+            public UInt32 startIndex;
+            public UInt32 baseVertex;
+            public UInt16 insideTrinagleCount;
+            public UInt16 stickingOutTrinagleCount;
+            public ParticleVector(BinaryReader br)
+            {
+                maxOutStickX = br.ReadSingle();
+                maxOutStickZ = br.ReadSingle();
+                startIndex = br.ReadUInt32();
+                baseVertex = br.ReadUInt32();
+                insideTrinagleCount = br.ReadUInt16();
+                stickingOutTrinagleCount = br.ReadUInt16();
             }
         }
     }

@@ -18,10 +18,12 @@ namespace Sabre
         {
             br = new BinaryReader(File.Open(fileLocation, FileMode.Open));
             header = new Header(br);
-            for(int i = 0; i < header.FileCount; i++)
+            string[] wadhash = File.ReadAllLines("Map14_wad_Brush_Bins.txt");
+            for (int i = 0; i < header.FileCount; i++)
             {
                 Entries.Add(new Entry(br, header.Version));
-                Identifiers.Add(new Identifier() { xxHash = Entries[i].XXHash, Name = Hashes.Find(x => Hash.xxHash(x) == Entries[i].XXHash.ToString()) });
+                try { Identifiers.Add(new Identifier { xxHash = wadhash[i].Split(' ')[0], Name = wadhash[i].Split(' ')[1] }); }
+                catch (Exception) { }
             }
             foreach(Entry e in Entries)
             {
@@ -30,7 +32,7 @@ namespace Sabre
                     br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
                     e.Data = br.ReadBytes((int)e.CompressedSize);
                     e.Data = Functions.DecompressGZip(e.Data);
-                    e.Name = Hashes.Find(x => Hash.xxHash(x) == e.XXHash);
+                    e.Name = Identifiers.Find(x => x.xxHash == e.XXHash).Name;
                     if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
                     {
                         e.FileType = FileType.BIN;
@@ -59,7 +61,7 @@ namespace Sabre
                 {
                     br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
                     e.Data = br.ReadBytes((int)e.UncompressedSize);
-                    e.Name = Hashes.Find(x => Hash.xxHash(x) == e.XXHash);
+                    e.Name = Identifiers.Find(x => x.xxHash == e.XXHash).Name;
                 }
                 else
                 {

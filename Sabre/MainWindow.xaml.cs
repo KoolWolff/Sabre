@@ -14,10 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using MahApps.Metro;
-using MahApps.Metro.SimpleChildWindow;
 using System.IO;
 using SabreAPI;
-using static MahApps.Metro.SimpleChildWindow.ChildWindowManager;
 
 namespace Sabre
 {
@@ -61,6 +59,7 @@ namespace Sabre
                 cfg = new Config("config", log);
                 Functions.LoadSettings(cfg, this, out WADHashes);
                 fwd = new FlipViewDownloader(this);
+                WGEOFile w = new WGEOFile("room.wgeo", true);
             }
             catch(Exception exception)
             {
