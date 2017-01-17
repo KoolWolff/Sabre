@@ -59,7 +59,6 @@ namespace Sabre
                 cfg = new Config("config", log);
                 Functions.LoadSettings(cfg, this, out WADHashes);
                 fwd = new FlipViewDownloader(this);
-                WGEOFile w = new WGEOFile("room.wgeo", true);
             }
             catch(Exception exception)
             {

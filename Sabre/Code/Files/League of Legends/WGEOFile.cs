@@ -132,7 +132,7 @@ namespace Sabre
                 {
                     Indices.Add(br.ReadUInt16());
                 }
-                while(br.BaseStream.Position < br.BaseStream.Length)
+                while(br.BaseStream.Position < br.BaseStream.Length) //bucketCount should work aswell but since only 1 WGEO is availible I dont know
                 {
                     ParticleVectors.Add(new ParticleVector(br));
                 }

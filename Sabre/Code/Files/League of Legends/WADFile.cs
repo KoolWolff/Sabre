@@ -18,7 +18,7 @@ namespace Sabre
         {
             br = new BinaryReader(File.Open(fileLocation, FileMode.Open));
             header = new Header(br);
-            string[] wadhash = File.ReadAllLines("Map14_wad_Brush_Bins.txt");
+            string[] wadhash = File.ReadAllLines("wad.txt");
             for (int i = 0; i < header.FileCount; i++)
             {
                 Entries.Add(new Entry(br, header.Version));
@@ -29,39 +29,15 @@ namespace Sabre
             {
                 if(e.Compression == CompressionType.Compressed)
                 {
-                    br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
-                    e.Data = br.ReadBytes((int)e.CompressedSize);
-                    e.Data = Functions.DecompressGZip(e.Data);
-                    e.Name = Identifiers.Find(x => x.xxHash == e.XXHash).Name;
-                    if (e.Data[0] == 0x50 && e.Data[1] == 0x52 && e.Data[2] == 0x4F && e.Data[3] == 0x50)
-                    {
-                        e.FileType = FileType.BIN;
-                        if(e.Name == "" || e.Name == null)
-                        {
-                            BINFile.Header bh = new BINFile.Header(new MemoryStream(e.Data));
-                            if (bh.AssociatedBIN.Count == 2) e.Name = bh.AssociatedBIN[1].Name;
-                            e.IsBINGenerated = true;
-                        }
-                    }
+                    ReadData(br, e, true, Identifiers);
                 }
                 else if(e.Compression == CompressionType.String)
                 {
-                    br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
-                    e.Name = Encoding.ASCII.GetString(br.ReadBytes((int)br.ReadUInt32()));
-                    if(e.Name.Contains("events.bnk"))
-                    {
-                        e.FileType = FileType.StringEventBank;
-                    }
-                    else if(e.Name.Contains("audio.bnk"))
-                    {
-                        e.FileType = FileType.StringAudioBank;
-                    }
+                    ReadString(br, e);
                 }
                 else if(e.Compression == CompressionType.Uncompressed)
                 {
-                    br.BaseStream.Seek(e.FileDataOffset, SeekOrigin.Begin);
-                    e.Data = br.ReadBytes((int)e.UncompressedSize);
-                    e.Name = Identifiers.Find(x => x.xxHash == e.XXHash).Name;
+                    ReadData(br, e, false, Identifiers);
                 }
                 else
                 {
@@ -112,7 +88,6 @@ namespace Sabre
             public UInt32 CompressedSize;
             public UInt32 UncompressedSize;
             public CompressionType Compression { get; set; }
-            public FileType FileType { get; set; }
             public UInt64 SHA256;
             public Entry(BinaryReader br, string Version)
             {
@@ -126,6 +101,25 @@ namespace Sabre
                 Size = Functions.SizeSuffix(UncompressedSize);
             }
         }
+        public static void ReadString(BinaryReader br, Entry entry)
+        {
+            br.BaseStream.Seek(entry.FileDataOffset, SeekOrigin.Begin);
+            entry.Name = Encoding.ASCII.GetString(br.ReadBytes((int)br.ReadUInt32()));
+        }
+        public static void ReadData(BinaryReader br, Entry entry, bool isCompressed, List<Identifier> identifiers)
+        {
+            br.BaseStream.Seek(entry.FileDataOffset, SeekOrigin.Begin);
+            if(isCompressed)
+            {
+                entry.Data = br.ReadBytes((int)entry.CompressedSize);
+                entry.Data = Functions.DecompressGZip(entry.Data);
+            }
+            else
+            {
+                entry.Data = br.ReadBytes((int)entry.UncompressedSize);
+            }
+            entry.Name = identifiers.Find(x => x.xxHash == entry.XXHash).Name;
+        }
         public struct Identifier
         {
             public string xxHash;
@@ -136,13 +130,6 @@ namespace Sabre
             Uncompressed = 0,
             Compressed = 1,
             String = 2,
-            Unknown
-        }
-        public enum FileType
-        {
-            BIN,
-            StringAudioBank,
-            StringEventBank,
             Unknown
         }
     }
