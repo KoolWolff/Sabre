@@ -12,8 +12,9 @@ namespace Sabre
         public BinaryReader br;
         public Header header;
         public List<Vertex> Vertices = new List<Vertex>();
+        public List<byte[]> Tangents = new List<byte[]>();
         public List<Face> Faces = new List<Face>();
-        public UInt32[] Nulls = new UInt32[3];
+        public List<Color> Colors = new List<Color>();
         public SCBFile(string fileLocation)
         {
             br = new BinaryReader(File.Open(fileLocation, FileMode.Open));
@@ -24,9 +25,12 @@ namespace Sabre
                 {
                     Vertices.Add(new Vertex(br));
                 }
-                if (header.IsUnknownPresent == 1)
+                if (header.HasTangent == 1)
                 {
-                    br.ReadBytes((int)header.NumberOfVertices * 4);
+                    for(int i = 0; i < header.NumberOfVertices; i++)
+                    {
+                        Tangents.Add(br.ReadBytes(4));
+                    }
                     br.ReadBytes(12);
                 }
                 else
@@ -36,6 +40,13 @@ namespace Sabre
                 for (int i = 0; i < header.NumberOfFaces; i++)
                 {
                     Faces.Add(new Face(br));
+                }
+                if (header.HasVCP == 1)
+                {
+                    for (int i = 0; i < header.NumberOfFaces; i++)
+                    {
+                        Colors.Add(new Color(br, false));
+                    }
                 }
             }   
             else if(header.Major == 2 && header.Minor == 2)
@@ -48,6 +59,13 @@ namespace Sabre
                 {
                     Faces.Add(new Face(br));
                 }
+                if(header.HasVCP == 1)
+                {
+                    for (int i = 0; i < header.NumberOfFaces; i++)
+                    {
+                        Colors.Add(new Color(br, false));
+                    }
+                }
             }
         }
         public class Header
@@ -58,11 +76,10 @@ namespace Sabre
             public string Name;
             public UInt32 NumberOfVertices;
             public UInt32 NumberOfFaces;
-            public UInt32 Two; //?
+            public UInt32 HasVCP; //Virtual Color Projection ????
             public float[] Min = new float[3];
             public float[] Max = new float[3];
-            public UInt32 IsUnknownPresent;
-            public UInt32 IsColored; //v2
+            public UInt32 HasTangent;
             public Header(BinaryReader br)
             {
                 Magic = Encoding.ASCII.GetString(br.ReadBytes(8));
@@ -73,7 +90,7 @@ namespace Sabre
                 {
                     NumberOfVertices = br.ReadUInt32();
                     NumberOfFaces = br.ReadUInt32();
-                    Two = br.ReadUInt32();
+                    HasVCP = br.ReadUInt32();
                     for (int i = 0; i < 3; i++)
                     {
                         Min[i] = br.ReadSingle();
@@ -82,13 +99,13 @@ namespace Sabre
                     {
                         Max[i] = br.ReadSingle();
                     }
-                    IsUnknownPresent = br.ReadUInt32();
+                    HasTangent = br.ReadUInt32();
                 }
                 else if(Major == 2 && Minor == 2)
                 {
                     NumberOfVertices = br.ReadUInt32();
                     NumberOfFaces = br.ReadUInt32();
-                    IsColored = br.ReadUInt32();
+                    HasVCP = br.ReadUInt32();
                     for (int i = 0; i < 3; i++)
                     {
                         Min[i] = br.ReadSingle();
@@ -119,19 +136,27 @@ namespace Sabre
             public float[] V = new float[3];
             public Face(BinaryReader br)
             {
-                for(int i = 0; i < 3; i++) //12
+                for(int i = 0; i < 3; i++) 
                 {
                     Indices[i] = br.ReadUInt32();
                 }
                 Name = Encoding.ASCII.GetString(br.ReadBytes(64));
-                for (int i = 0; i < 3; i++) //12
+                for (int i = 0; i < 3; i++) 
                 {
                     U[i] = br.ReadSingle();
-                }
-                for (int i = 0; i < 3; i++) //12
-                {
                     V[i] = br.ReadSingle();
                 }
+            }
+        }
+        public class Color
+        {
+            public byte R, G, B, A;
+            public Color(BinaryReader br, bool readA)
+            {
+                R = br.ReadByte();
+                G = br.ReadByte();
+                B = br.ReadByte();
+                if (readA) A = br.ReadByte();
             }
         }
     }

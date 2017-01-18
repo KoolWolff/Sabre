@@ -64,6 +64,7 @@ namespace Sabre
             {
                 log.Write("CRASH OCCURED | Exception Type: " + exception.InnerException.ToString() + " | Source: " + exception.Source + " | Message: " + exception.Message, Logger.WriterType.WriteCrash);
             }
+            NVRFile nvr = new NVRFile("room.nvr");
         }
         
         private void buttonGit(object sender, RoutedEventArgs e)
