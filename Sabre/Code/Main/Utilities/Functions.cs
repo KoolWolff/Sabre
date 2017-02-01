@@ -257,6 +257,17 @@ namespace Sabre
                 Application.Current.Dispatcher.BeginInvoke(new Action(() => { entries.Remove(se); }));
             }
         }
+        public static void AddLight(ObservableCollection<LightFile.Light> entries)
+        {
+            Application.Current.Dispatcher.BeginInvoke(new Action(() => { entries.Add(new LightFile.Light()); }));
+        }
+        public static void RemoveLight(ObservableCollection<LightFile.Light> lights, System.Collections.IList selectedEntries)
+        {
+            foreach (LightFile.Light light in selectedEntries)
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() => { lights.Remove(light); }));
+            }
+        }
         public static void ExtractMOBEntries(System.Collections.IList selectedEntries)
         {
             string path = SelectFolder("Select the path where you want to export your MOB Entries");

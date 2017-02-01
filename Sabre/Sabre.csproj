@@ -77,6 +77,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Code\Files\League of Legends\LightEnviromentBinaryFIle.cs" />
+    <Compile Include="Code\Files\League of Legends\LightEnviromentFile.cs" />
+    <Compile Include="Code\Files\League of Legends\LightFile.cs" />
     <Compile Include="Code\Files\Sabre\SkinDatabseFile.cs" />
     <Compile Include="Code\Files\Wooxy\WXYFile.cs" />
     <Compile Include="Code\Main\FlipViewDownloader.cs" />
@@ -97,7 +100,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Code\Files\League of Legends\BINFile.cs" />
     <Compile Include="Code\Files\League of Legends\BNK\WwiseBank.cs" />
     <Compile Include="Code\Files\League of Legends\BNK\WwiseBankObject.cs" />
     <Compile Include="Code\Files\League of Legends\BNK\WwiseBankSection.cs" />

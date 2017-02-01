@@ -51,7 +51,7 @@ namespace Sabre
             }   
             else if(header.Major == 2 && header.Minor == 2)
             {
-                for (int i = 0; i < header.NumberOfVertices + 1; i++)
+                for (int i = 0; i < header.NumberOfVertices; i++)
                 {
                     Vertices.Add(new Vertex(br));
                 }

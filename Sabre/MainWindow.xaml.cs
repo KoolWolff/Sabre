@@ -28,11 +28,11 @@ namespace Sabre
         private Config cfg;
         private Logger log = new Logger(DateTime.Now.ToString("HH-mm-ss"));
         private string ecdsa;
-        private ReleaseManifestFile rel;
         private TroyiniFile ini;
         private WADFile wad;
         private MOBFile mob;
         private WPKFile wpk;
+        private LightFile light;
         public List<string> WADHashes = new List<string>();
         public MainWindow()
         {
@@ -64,7 +64,6 @@ namespace Sabre
             {
                 log.Write("CRASH OCCURED | Exception Type: " + exception.InnerException.ToString() + " | Source: " + exception.Source + " | Message: " + exception.Message, Logger.WriterType.WriteCrash);
             }
-            NVRFile nvr = new NVRFile("room.nvr");
         }
         
         private void buttonGit(object sender, RoutedEventArgs e)
@@ -455,6 +454,37 @@ namespace Sabre
         private void tileFileExtractor_Click(object sender, RoutedEventArgs e)
         {
             Functions.SwitchGrids(main, gridFileExtractor);
+        }
+
+        private void btnLightEditorPath_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.Filter = "Light files (*.dat)|*.dat";
+            if (ofd.ShowDialog() == true)
+            {
+                light = new LightFile(ofd.FileName);
+                dataLightEditor.ItemsSource = light.Lights;
+            }
+        }
+
+        private void btnLightEditorAddEntry_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.AddLight(light.Lights);
+        }
+
+        private void btnLightEditorRemoveEntry_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.RemoveLight(light.Lights, dataLightEditor.SelectedItems);
+        }
+
+        private void btnLightEditorSave_Click(object sender, RoutedEventArgs e)
+        {
+            light.Write();
+        }
+
+        private void tileLightEditor_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.SwitchGrids(gridSkinCreation, gridLightEditor);
         }
     }
 }

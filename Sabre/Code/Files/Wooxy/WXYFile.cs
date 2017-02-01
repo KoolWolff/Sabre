@@ -12,7 +12,6 @@ namespace Sabre
         public UInt32 PreviewCount;
         public UInt16 ProjectCount;
         public UInt32 FileCount;
-        public byte[] file;
         public List<Preview> Previews = new List<Preview>();
         public List<string> Projects = new List<string>();
         public List<string> FileNames = new List<string>();
@@ -40,7 +39,7 @@ namespace Sabre
             }
             for(int i = 0; i < FileCount; i++)
             {
-                Files.Add(new FileEntry(br) { Name = FileNames[i]}); //Seems like this method of assignig names doesnt work well
+                Files.Add(new FileEntry(br));
             }
             foreach(FileEntry fe in Files)
             {
@@ -51,16 +50,16 @@ namespace Sabre
         public class Header
         {
             public string Magic;
-            public UInt32 version;
+            public UInt32 FileVersion;
             public string OINK;
-            public UInt16 NameL, AuthorL, VersionL, CategoryL, SubCategoryL;
-            public byte[] NameB, AuthorB, VersionB, CategoryB, SubCategoryB;
             public string Name, Author, Version, Category, SubCategory;
             public Header(BinaryReader br)
             {
+                UInt16 NameL, AuthorL, VersionL, CategoryL, SubCategoryL;
+                byte[] NameB, AuthorB, VersionB, CategoryB, SubCategoryB;
                 Magic = Encoding.ASCII.GetString(br.ReadBytes(4));
-                version = br.ReadUInt32();
-                if (version < 6 || version > 6) throw new Exception("WXY Version: " + version + " not supported");
+                FileVersion = br.ReadUInt32();
+                if (FileVersion < 6 || FileVersion > 7) throw new Exception("WXY Version: " + FileVersion + " not supported");
                 OINK = Encoding.ASCII.GetString(br.ReadBytes(4));
 
                 NameL = br.ReadUInt16();
@@ -75,11 +74,28 @@ namespace Sabre
                 CategoryB = br.ReadBytes(CategoryL);
                 SubCategoryB = br.ReadBytes(SubCategoryL);
 
-                Name = Encoding.ASCII.GetString(DecompressDeflate(NameB));
-                Author = Encoding.ASCII.GetString(DecompressDeflate(AuthorB));
-                Version = Encoding.ASCII.GetString(DecompressDeflate(VersionB));
-                Category = Encoding.ASCII.GetString(DecompressDeflate(CategoryB));
-                SubCategory = Encoding.ASCII.GetString(DecompressDeflate(SubCategoryB));          
+                if (FileVersion > 7)
+                {
+                    NameB = DecompressMetadataString(NameB);
+                    AuthorB = DecompressMetadataString(AuthorB);
+                    VersionB = DecompressMetadataString(VersionB);
+                    CategoryB = DecompressMetadataString(CategoryB);
+                    SubCategoryB = DecompressMetadataString(SubCategoryB);
+
+                    Name = Encoding.UTF8.GetString(DecompressDeflate(Functions.StringToByteArray(Name)));
+                    Author = Encoding.UTF8.GetString(DecompressDeflate(Functions.StringToByteArray(Author)));
+                    Version = Encoding.UTF8.GetString(DecompressDeflate(Functions.StringToByteArray(Version)));
+                    Category = Encoding.UTF8.GetString(DecompressDeflate(Functions.StringToByteArray(Category)));
+                    SubCategory = Encoding.UTF8.GetString(DecompressDeflate(Functions.StringToByteArray(SubCategory)));
+                }  
+                else
+                {
+                    Name = Encoding.ASCII.GetString(DecompressDeflate(NameB));
+                    Author = Encoding.ASCII.GetString(DecompressDeflate(AuthorB));
+                    Version = Encoding.ASCII.GetString(DecompressDeflate(VersionB));
+                    Category = Encoding.ASCII.GetString(DecompressDeflate(CategoryB));
+                    SubCategory = Encoding.ASCII.GetString(DecompressDeflate(SubCategoryB));
+                }
             }
         }
         public class FileEntry
@@ -119,13 +135,13 @@ namespace Sabre
         public enum PreviewType : byte
         {
             Image,
-            Model //This is just an assumption which I made because Chewy once told me that models would be a thing
+            Model 
         }
         public enum CompressionType : byte
         {
-            Uncompressed, //assumption
-            Deflate, //Main algo used for compression within wooxy
-            Zlib //assumption
+            Uncompressed, 
+            Deflate, 
+            Zlib 
         }
 
         public void Write(string fileLocation)
@@ -138,7 +154,7 @@ namespace Sabre
                 byte[] CategoryA = CompressDeflate(Encoding.ASCII.GetBytes(h.Category));
                 byte[] SubCategoryA = CompressDeflate(Encoding.ASCII.GetBytes(h.SubCategory));
                 bw.Write(h.Magic.ToCharArray());
-                bw.Write(h.version);
+                bw.Write(h.FileVersion);
                 bw.Write(h.OINK.ToCharArray());
 
                 bw.Write((UInt16)NameA.Length);
@@ -152,7 +168,6 @@ namespace Sabre
                 bw.Write(VersionA);
                 bw.Write(CategoryA);
                 bw.Write(SubCategoryA);
-                bw.Write(file);
             }
         }
         public static byte[] DecompressDeflate(byte[] input)
@@ -162,6 +177,15 @@ namespace Sabre
         public static byte[] CompressDeflate(byte[] input)
         {
             return Ionic.Zlib.DeflateStream.CompressBuffer(input);
+        }
+        public static byte[] DecompressMetadataString(byte[] deflateData)
+        {
+            byte[] newDeflate = deflateData;
+            for (int i = 0; i < deflateData.Length; i++)
+            {
+                newDeflate[i] = (byte)(newDeflate[i] ^ (byte)(i * 42 + (newDeflate.Length - i) * 17));
+            }
+            return newDeflate;
         }
     }
 }

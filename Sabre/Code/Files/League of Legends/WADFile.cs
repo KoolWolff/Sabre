@@ -55,7 +55,6 @@ namespace Sabre
             public byte[] ECDSA {get; set;}
             public byte[] ZeroPadding;
             public UInt64 WADFileID; //According to SS, previously "Checksum"
-            public string ChecksumS;
             public UInt16 TOCStartOffset;
             public UInt16 TOCFileEntrySize;
             public UInt32 FileCount;

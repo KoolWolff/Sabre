@@ -16,8 +16,8 @@ namespace Sabre
         public List<Material> Materials = new List<Material>();
         public List<UInt16> Indices = new List<UInt16>();
         public List<Vertex> Vertices = new List<Vertex>();
-        public UInt32 IndCount;
-        public UInt32 VertCount;
+        public UInt32 IndiceCount;
+        public UInt32 VerticeCount;
         public SKNFile(string fileLocation)
         {
             br = new BinaryReader(File.Open(fileLocation, FileMode.Open));
@@ -30,27 +30,27 @@ namespace Sabre
             {
                 Zero = br.ReadUInt32();
             }
-            IndCount = br.ReadUInt32();
-            VertCount = br.ReadUInt32();
+            IndiceCount = br.ReadUInt32();
+            VerticeCount = br.ReadUInt32();
             if(header.Version == 4)
             {
                 boundingbox = new Metadata(br);
-                for (int i = 0; i < IndCount; i++)
+                for (int i = 0; i < IndiceCount; i++)
                 {
                     Indices.Add(br.ReadUInt16());
                 }
-                for (int i = 0; i < VertCount; i++)
+                for (int i = 0; i < VerticeCount; i++)
                 {
-                    Vertices.Add(new Vertex(br, boundingbox.TangentBoolean));
+                    Vertices.Add(new Vertex(br, boundingbox.isTangentPresent));
                 }
             }
             else if (header.Version == 2)
             {
-                for (int i = 0; i < IndCount; i++)
+                for (int i = 0; i < IndiceCount; i++)
                 {
                     Indices.Add(br.ReadUInt16());
                 }
-                for (int i = 0; i < VertCount; i++)
+                for (int i = 0; i < VerticeCount; i++)
                 {
                     Vertices.Add(new Vertex(br));
                 }
@@ -89,7 +89,7 @@ namespace Sabre
         public class Metadata
         {
             public UInt32 VertexSize;
-            public UInt32 TangentBoolean;
+            public UInt32 isTangentPresent;
             public float MinX;
             public float MinY;
             public float MinZ;
@@ -100,7 +100,7 @@ namespace Sabre
             public Metadata(BinaryReader br)
             {
                 VertexSize = br.ReadUInt32();
-                TangentBoolean = br.ReadUInt32();
+                isTangentPresent = br.ReadUInt32();
                 MinX = br.ReadSingle();
                 MinY = br.ReadSingle();
                 MinZ = br.ReadSingle();
@@ -118,8 +118,7 @@ namespace Sabre
 			public float[] Normal = new float[3];
 			public float[] UV = new float[2];
             public byte[] Tangent = new byte[4];
-            public List<Int32> Additionals = new List<Int32>();
-            public Vertex(BinaryReader br, uint AdditionalCount)
+            public Vertex(BinaryReader br, uint isTangentPresent)
             {
                 for(int i = 0; i < 3; i++)
                 {
@@ -138,7 +137,7 @@ namespace Sabre
                 {
                     UV[i] = br.ReadSingle();
                 }
-                if (AdditionalCount == 1) return;
+                if (isTangentPresent == 1) return;
                 for(int i = 0; i < 4; i++)
                 {
                     Tangent[i] = br.ReadByte();

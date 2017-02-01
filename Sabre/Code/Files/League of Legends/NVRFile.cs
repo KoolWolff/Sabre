@@ -115,7 +115,6 @@ namespace Sabre
         public class Material
         {
             public string Name;
-            public UInt32 Unk;
             public MaterialType MaterialType1;
             public Color DiffuseColor;
             public string DiffuseTexture;

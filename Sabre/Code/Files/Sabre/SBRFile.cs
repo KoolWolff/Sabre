@@ -62,7 +62,6 @@ namespace Sabre.Code.Files
             public string Name;
             public UInt64 DataOffset, DataSize;
             public byte[] Data;
-            public UInt32 mOffset;
             public ArchiveFile(BinaryReader br)
             {
                 Name = Encoding.ASCII.GetString(br.ReadBytes(br.ReadUInt16()));
