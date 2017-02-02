@@ -197,7 +197,7 @@ namespace Sabre
 
         private void btnMOBEditorExtractEntries_Click(object sender, RoutedEventArgs e)
         {
-            mob.ExtractEntries(dataMOBEditor.SelectedItems);
+            mob.ExtractEntries(dataMOBEditor.SelectedItems, true);
         }
 
         private void tileWPKEditor_Click(object sender, RoutedEventArgs e)

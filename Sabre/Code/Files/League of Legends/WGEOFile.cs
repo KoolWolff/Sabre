@@ -47,8 +47,8 @@ namespace Sabre
             public float[] Sphere = new float[4]; //Vec3 - Pos | Sphere Radius 
             public float[] Min = new float[3];
             public float[] Max = new float[3];
-            public UInt32 VertCount;
-            public UInt32 IndCount;
+            public UInt32 VerticeCount;
+            public UInt32 IndiceCount;
             public List<Vertex> Vertices = new List<Vertex>();
             public List<UInt16> Indices = new List<UInt16>();
             public Model(BinaryReader br)
@@ -67,13 +67,13 @@ namespace Sabre
                 {
                     Max[i] = br.ReadSingle();
                 }
-                VertCount = br.ReadUInt32();
-                IndCount = br.ReadUInt32();
-                for(int i = 0; i < VertCount; i++)
+                VerticeCount = br.ReadUInt32();
+                IndiceCount = br.ReadUInt32();
+                for(int i = 0; i < VerticeCount; i++)
                 {
                     Vertices.Add(new Vertex(br));
                 }
-                for(int i = 0; i < IndCount; i++)
+                for(int i = 0; i < IndiceCount; i++)
                 {
                     Indices.Add(br.ReadUInt16());
                 }

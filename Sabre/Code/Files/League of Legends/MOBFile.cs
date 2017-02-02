@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Globalization;
 
 namespace Sabre
 {
@@ -247,14 +248,37 @@ namespace Sabre
                 Application.Current.Dispatcher.BeginInvoke(new Action(() => { MobObjects.Remove(se); }));
             }
         }
-        public void ExtractEntries(System.Collections.IList selectedEntries)
+        public void ExtractEntries(System.Collections.IList selectedEntries, bool toTXT)
         {
             string path = Functions.SelectFolder("Select the path where you want to export your MOB Entries");
-            foreach (MOBObject o in selectedEntries)
+            if(!toTXT)
             {
-                using (BinaryWriter bw = new BinaryWriter(File.OpenWrite(path + "\\" + o.Name + ".mobentry")))
+                foreach (MOBObject o in selectedEntries)
                 {
-                    o.Write(bw);
+                    using (BinaryWriter bw = new BinaryWriter(File.OpenWrite(path + "\\" + o.Name + ".mobentry")))
+                    {
+                        o.Write(bw);
+                    }
+                }
+            }
+            else
+            {
+                using (StreamWriter sw = new StreamWriter(File.OpenWrite(path + "\\" + "props.mobentry")))
+                {
+                    var num = CultureInfo.InvariantCulture.NumberFormat;
+                    foreach (MOBObject o in selectedEntries)
+                    {
+                        sw.WriteLine("AddObject(new LevelProp({0}f, {1}f, {2}f, {3}f, {4}f, {5}f, 0f, 0f, {6}, {7}));", 
+                            o.Position__X.ToString(num), 
+                            o.Position__Y.ToString(num),
+                            o.Position__Z.ToString(num), 
+                            o.Rotation__X.ToString(num), 
+                            o.Rotation__Y.ToString(num), 
+                            o.Rotation__Z.ToString(num), 
+                            @"""" + o.Name + @"""",
+                            @"""" + "" + @"""",
+                            "");
+                    }
                 }
             }
         }
