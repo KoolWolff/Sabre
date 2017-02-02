@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Sabre
 {
@@ -164,6 +165,42 @@ namespace Sabre
                 Healthbar__Bounding__Y = HealthBarPosition2[1];
                 Healthbar__Bounding__Z = HealthBarPosition2[2];
             }
+            public void Write(BinaryWriter bw)
+            {
+                bw.Write(Name.ToCharArray());
+                if (Name.Length != 60)
+                {
+                    for (int i = Name.Length; i < 60; i++)
+                    {
+                        bw.Write((byte)0);
+                    }
+                }
+                bw.Write((UInt16)ObjectZero1);
+                bw.Write((byte)Flag);
+                bw.Write((byte)ObjectZero2);
+
+                bw.Write(Position__X);
+                bw.Write(Position__Y);
+                bw.Write(Position__Z);
+
+                bw.Write(Rotation__X);
+                bw.Write(Rotation__Y);
+                bw.Write(Rotation__Z);
+
+                bw.Write(Scaling__X);
+                bw.Write(Scaling__Y);
+                bw.Write(Scaling__Z);
+
+                bw.Write(Healthbar__X);
+                bw.Write(Healthbar__Y);
+                bw.Write(Healthbar__Z);
+
+                bw.Write(Healthbar__Bounding__X);
+                bw.Write(Healthbar__Bounding__Y);
+                bw.Write(Healthbar__Bounding__Z);
+
+                bw.Write((UInt32)ObjectZero3);
+            }
         }
         public enum MapObjectType : byte {
             BarrackSpawn = 0,
@@ -177,6 +214,39 @@ namespace Sabre
             Nav = 8,
             Info = 9,
             LevelProp = 10 };
+        public void Write()
+        {
+            Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
+            sfd.Title = "Select the path where you want to save your MOB file";
+            sfd.Filter = "MOB File | *.mob";
+            sfd.DefaultExt = "mob";
+
+            if (sfd.ShowDialog() == true)
+            {
+                using (BinaryWriter bw = new BinaryWriter(File.OpenWrite(sfd.FileName)))
+                {
+                    bw.Write(Magic.ToCharArray());
+                    bw.Write(Version);
+                    bw.Write((UInt32)MobObjects.Count);
+                    bw.Write(Zero);
+                    foreach (MOBObject entry in MobObjects)
+                    {
+                        entry.Write(bw);
+                    }
+                }
+            }
+        }
+        public void AddEntry()
+        {
+            Application.Current.Dispatcher.BeginInvoke(new Action(() => { MobObjects.Add(new MOBObject("Entry name here")); }));
+        }
+        public void RemoveEntry(System.Collections.IList selectedEntries)
+        {
+            foreach (MOBObject se in selectedEntries)
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() => { MobObjects.Remove(se); }));
+            }
+        }
         private static char[] GetCharsFromString(string str, int size)
         {
             char[] final = new char[size];

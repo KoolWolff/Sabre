@@ -246,28 +246,6 @@ namespace Sabre
                 }
             }
         }
-        public static void AddMOBEntry(ObservableCollection<MOBFile.MOBObject> entries) 
-        {
-            Application.Current.Dispatcher.BeginInvoke(new Action(() => { entries.Add(new MOBFile.MOBObject("Entry name here")); }));
-        }
-        public static void RemoveMOBEntry(ObservableCollection<MOBFile.MOBObject> entries, System.Collections.IList selectedEntries)
-        {
-            foreach(MOBFile.MOBObject se in selectedEntries)
-            {
-                Application.Current.Dispatcher.BeginInvoke(new Action(() => { entries.Remove(se); }));
-            }
-        }
-        public static void AddLight(ObservableCollection<LightFile.Light> entries)
-        {
-            Application.Current.Dispatcher.BeginInvoke(new Action(() => { entries.Add(new LightFile.Light()); }));
-        }
-        public static void RemoveLight(ObservableCollection<LightFile.Light> lights, System.Collections.IList selectedEntries)
-        {
-            foreach (LightFile.Light light in selectedEntries)
-            {
-                Application.Current.Dispatcher.BeginInvoke(new Action(() => { lights.Remove(light); }));
-            }
-        }
         public static void ExtractMOBEntries(System.Collections.IList selectedEntries)
         {
             string path = SelectFolder("Select the path where you want to export your MOB Entries");
@@ -315,7 +293,8 @@ namespace Sabre
         {
 
         }
-        public static void ExtractWAD(System.Collections.IList entries, List<string> Hashes)
+        public static void ExtractWAD(System.Collections
+            .IList entries, List<string> Hashes)
         {
             foreach (WADFile.Entry e in entries)
             {
@@ -404,19 +383,7 @@ namespace Sabre
             }
             GC.Collect();
         }
-        public static void PopulateFileExtractor(TreeView tree)
-        {
 
-        }
-
-        public static string ModifyMOBName(string name)
-        {
-            for(int i = name.Length; i < 60; i++)
-            {
-                name += "\0";
-            }
-            return name;
-        }
         public static string GetWPKName(char[] tempName)
         {
             string name = "";

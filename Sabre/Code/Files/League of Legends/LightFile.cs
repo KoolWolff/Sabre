@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Sabre
 {
@@ -67,7 +68,7 @@ namespace Sabre
             Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
             sfd.Title = "Select the path where you want to save your Lights.dat file";
             sfd.Filter = "DAT File | *.dat";
-            sfd.DefaultExt = "dar";
+            sfd.DefaultExt = "dat";
             if(sfd.ShowDialog() == true)
             {
                 using (StreamWriter sw = new StreamWriter(File.Open(sfd.FileName, FileMode.OpenOrCreate)))
@@ -77,6 +78,17 @@ namespace Sabre
                         light.Write(sw);
                     }
                 }
+            }
+        }
+        public void AddLight()
+        {
+            Application.Current.Dispatcher.BeginInvoke(new Action(() => { Lights.Add(new Light()); }));
+        }
+        public void RemoveLight(System.Collections.IList selectedEntries)
+        {
+            foreach (LightFile.Light light in selectedEntries)
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() => { Lights.Remove(light); }));
             }
         }
     }

@@ -33,6 +33,7 @@ namespace Sabre
         private MOBFile mob;
         private WPKFile wpk;
         private LightFile light;
+        private LightEnvironmentFile lightEnvironment;
         public List<string> WADHashes = new List<string>();
         public MainWindow()
         {
@@ -186,12 +187,12 @@ namespace Sabre
 
         private void btnMOBEditorAddEntry_Click(object sender, RoutedEventArgs e)
         {
-            Functions.AddMOBEntry(mob.MobObjects);
+            mob.AddEntry();
         }
 
         private void btnMOBEditorRemoveEntry_Click(object sender, RoutedEventArgs e)
         {
-            Functions.RemoveMOBEntry(mob.MobObjects, dataMOBEditor.SelectedItems);
+            mob.RemoveEntry(dataMOBEditor.SelectedItems);
         }
 
         private void btnMOBEditorExtractEntries_Click(object sender, RoutedEventArgs e)
@@ -467,14 +468,14 @@ namespace Sabre
             }
         }
 
-        private void btnLightEditorAddEntry_Click(object sender, RoutedEventArgs e)
+        private void btnLightEditorAddLight_Click(object sender, RoutedEventArgs e)
         {
-            Functions.AddLight(light.Lights);
+            light.AddLight();
         }
 
-        private void btnLightEditorRemoveEntry_Click(object sender, RoutedEventArgs e)
+        private void btnLightEditorRemoveLight_Click(object sender, RoutedEventArgs e)
         {
-            Functions.RemoveLight(light.Lights, dataLightEditor.SelectedItems);
+            light.RemoveLight(dataLightEditor.SelectedItems);
         }
 
         private void btnLightEditorSave_Click(object sender, RoutedEventArgs e)
@@ -485,6 +486,37 @@ namespace Sabre
         private void tileLightEditor_Click(object sender, RoutedEventArgs e)
         {
             Functions.SwitchGrids(gridSkinCreation, gridLightEditor);
+        }
+
+        private void tileLightEnvironmentEditor_Click(object sender, RoutedEventArgs e)
+        {
+            Functions.SwitchGrids(gridSkinCreation, gridLightEnvironmentEditor);
+        }
+
+        private void btnLightEnvironmentEditorPath_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.Filter = "Light_Env files (*.dat)|*.dat";
+            if (ofd.ShowDialog() == true)
+            {
+                lightEnvironment = new LightEnvironmentFile(ofd.FileName);
+                dataLightEnvironmentEditor.ItemsSource = lightEnvironment.Lights;
+            }
+        }
+
+        private void btnLightEnvironmentEditorAddLight_Click(object sender, RoutedEventArgs e)
+        {
+            lightEnvironment.AddLight();
+        }
+
+        private void btnLightEnvironmentEditorRemoveLight_Click(object sender, RoutedEventArgs e)
+        {
+            lightEnvironment.RemoveLight(dataLightEnvironmentEditor.SelectedItems);
+        }
+
+        private void btnLightEnvironmentEditorSave_Click(object sender, RoutedEventArgs e)
+        {
+            lightEnvironment.Write();
         }
     }
 }
