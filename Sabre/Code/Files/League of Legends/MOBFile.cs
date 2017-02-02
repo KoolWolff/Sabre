@@ -247,6 +247,17 @@ namespace Sabre
                 Application.Current.Dispatcher.BeginInvoke(new Action(() => { MobObjects.Remove(se); }));
             }
         }
+        public void ExtractEntries(System.Collections.IList selectedEntries)
+        {
+            string path = Functions.SelectFolder("Select the path where you want to export your MOB Entries");
+            foreach (MOBObject o in selectedEntries)
+            {
+                using (BinaryWriter bw = new BinaryWriter(File.OpenWrite(path + "\\" + o.Name + ".mobentry")))
+                {
+                    o.Write(bw);
+                }
+            }
+        }
         private static char[] GetCharsFromString(string str, int size)
         {
             char[] final = new char[size];

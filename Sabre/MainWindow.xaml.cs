@@ -182,7 +182,7 @@ namespace Sabre
 
         private void btnMOBEditorSave_Click(object sender, RoutedEventArgs e)
         {
-            Functions.SaveMOB(mob, dataMOBEditor.Items);
+            mob.Write();
         }
 
         private void btnMOBEditorAddEntry_Click(object sender, RoutedEventArgs e)
@@ -197,7 +197,7 @@ namespace Sabre
 
         private void btnMOBEditorExtractEntries_Click(object sender, RoutedEventArgs e)
         {
-            Functions.ExtractMOBEntries(dataMOBEditor.SelectedItems);
+            mob.ExtractEntries(dataMOBEditor.SelectedItems);
         }
 
         private void tileWPKEditor_Click(object sender, RoutedEventArgs e)
@@ -465,6 +465,7 @@ namespace Sabre
             {
                 light = new LightFile(ofd.FileName);
                 dataLightEditor.ItemsSource = light.Lights;
+                textLightEditorPath.Text = ofd.FileName;
             }
         }
 
@@ -497,6 +498,7 @@ namespace Sabre
         {
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
             ofd.Filter = "Light_Env files (*.dat)|*.dat";
+            textLightEnvironmentEditorPath.Text = ofd.FileName;
             if (ofd.ShowDialog() == true)
             {
                 lightEnvironment = new LightEnvironmentFile(ofd.FileName);

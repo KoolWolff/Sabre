@@ -170,7 +170,7 @@ namespace Sabre
             }
             return s;
         }
-        public static string ReadNullTerminatedString(BinaryReader br) //Not sure if this will work efficently
+        public static string ReadNullTerminatedString(BinaryReader br)
         {
             string s = "";
             do
@@ -192,109 +192,7 @@ namespace Sabre
             return s;
         }
 
-        public static void SaveMOB(MOBFile mob, System.Collections.IList entries)
-        {
-            Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
-            sfd.Title = "Select the path where you want to save your MOB file";
-            sfd.Filter = "MOB File | *.mob";
-            sfd.DefaultExt = "mob";
-
-            if (sfd.ShowDialog() == true)
-            {
-                using (BinaryWriter bw = new BinaryWriter(File.OpenWrite(sfd.FileName)))
-                {
-                    bw.Write(mob.Magic.ToCharArray());
-                    bw.Write(mob.Version);
-                    bw.Write((UInt32)entries.Count);
-                    bw.Write(mob.Zero);
-                    foreach(MOBFile.MOBObject o in entries)
-                    {
-                        bw.Write(o.Name.ToCharArray());
-                        if(o.Name.Length != 60)
-                        {
-                            for(int i = o.Name.Length; i < 60; i++)
-                            {
-                                bw.Write((byte)0);
-                            }
-                        }
-                        bw.Write((UInt16)o.ObjectZero1);
-                        bw.Write((byte)o.Flag);
-                        bw.Write((byte)o.ObjectZero2);
-
-                        bw.Write(o.Position__X);
-                        bw.Write(o.Position__Y);
-                        bw.Write(o.Position__Z);
-
-                        bw.Write(o.Rotation__X);
-                        bw.Write(o.Rotation__Y);
-                        bw.Write(o.Rotation__Z);
-
-                        bw.Write(o.Scaling__X);
-                        bw.Write(o.Scaling__Y);
-                        bw.Write(o.Scaling__Z);
-
-                        bw.Write(o.Healthbar__X);
-                        bw.Write(o.Healthbar__Y);
-                        bw.Write(o.Healthbar__Z);
-
-                        bw.Write(o.Healthbar__Bounding__X);
-                        bw.Write(o.Healthbar__Bounding__Y);
-                        bw.Write(o.Healthbar__Bounding__Z);
-
-                        bw.Write((UInt32)o.ObjectZero3);
-                    }
-                }
-            }
-        }
-        public static void ExtractMOBEntries(System.Collections.IList selectedEntries)
-        {
-            string path = SelectFolder("Select the path where you want to export your MOB Entries");
-            foreach (MOBFile.MOBObject o in selectedEntries)
-            {
-                using (BinaryWriter bw = new BinaryWriter(File.OpenWrite(path + "\\" + o.Name + ".mobentry")))
-                {
-                    bw.Write(o.Name.ToCharArray());
-                    if (o.Name.Length != 60)
-                    {
-                        for (int i = o.Name.Length; i < 60; i++)
-                        {
-                            bw.Write((byte)0);
-                        }
-                    }
-                    bw.Write((UInt16)o.ObjectZero1);
-                    bw.Write((byte)o.Flag);
-                    bw.Write((byte)o.ObjectZero2);
-
-                    bw.Write(o.Position__X);
-                    bw.Write(o.Position__Y);
-                    bw.Write(o.Position__Z);
-
-                    bw.Write(o.Rotation__X);
-                    bw.Write(o.Rotation__Y);
-                    bw.Write(o.Rotation__Z);
-
-                    bw.Write(o.Scaling__X);
-                    bw.Write(o.Scaling__Y);
-                    bw.Write(o.Scaling__Z);
-
-                    bw.Write(o.Healthbar__X);
-                    bw.Write(o.Healthbar__Y);
-                    bw.Write(o.Healthbar__Z);
-
-                    bw.Write(o.Healthbar__Bounding__X);
-                    bw.Write(o.Healthbar__Bounding__Y);
-                    bw.Write(o.Healthbar__Bounding__Z);
-
-                    bw.Write((UInt32)o.ObjectZero3);
-                }
-            }
-        }
-        public static void ExtractWPK(string defaultPath, System.Collections.IList selectedEntries)
-        {
-
-        }
-        public static void ExtractWAD(System.Collections
-            .IList entries, List<string> Hashes)
+        public static void ExtractWAD(System.Collections.IList entries, List<string> Hashes)
         {
             foreach (WADFile.Entry e in entries)
             {
@@ -382,19 +280,6 @@ namespace Sabre
                 }
             }
             GC.Collect();
-        }
-
-        public static string GetWPKName(char[] tempName)
-        {
-            string name = "";
-            foreach (char c in tempName)
-            {
-                if (c != '\0')
-                {
-                    name += c;
-                }
-            }
-            return name;
         }
 
         public enum StringCaseType

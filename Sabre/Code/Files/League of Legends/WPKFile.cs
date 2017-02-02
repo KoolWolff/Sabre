@@ -32,7 +32,7 @@ namespace Sabre
                 a.DataSize = br.ReadUInt32();
                 a.NameLength = br.ReadUInt32();
                 a.tempName = br.ReadChars((int)a.NameLength * 2);
-                a.Name = Functions.GetWPKName(a.tempName);
+                a.Name = GetWPKName(a.tempName);
             }
             foreach (var a in AudioFiles)
             {
@@ -72,6 +72,18 @@ namespace Sabre
             {
                 mtOff = metaOffset;
             }
+        }
+        public static string GetWPKName(char[] tempName)
+        {
+            string name = "";
+            foreach (char c in tempName)
+            {
+                if (c != '\0')
+                {
+                    name += c;
+                }
+            }
+            return name;
         }
     }
 }
